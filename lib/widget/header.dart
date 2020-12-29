@@ -6,6 +6,9 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:anime_tv_app/style/theme.dart' as Style;
 import 'package:page_indicator/page_indicator.dart';
 
+import 'error_widget.dart';
+import 'loading_widget.dart';
+
 class Header extends StatefulWidget {
   @override
   _HeaderState createState() => _HeaderState();
@@ -28,44 +31,19 @@ class _HeaderState extends State<Header> {
       builder: (context, AsyncSnapshot<MovieResponse> snapshot) {
         if (snapshot.hasData) {
           if (snapshot.data.error != null && snapshot.data.error.length > 0) {
-            return _buildErrorWidget(snapshot.data.error);
+            return BuildError.buildErrorWidget(snapshot.data.error);
           }
           return _buildHomeWidget(snapshot.data);
         } else if (snapshot.hasError) {
-          return _buildErrorWidget(snapshot.error);
+          return BuildError.buildErrorWidget(snapshot.error);
         } else {
-          return _buildLoadingWidget();
+          return Container(
+            height: 220,
+              child: Loading.buildLoadingWidget()
+          );
         }
       },
     );
-  }
-
-  Widget _buildLoadingWidget() {
-    return Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            SizedBox(
-              height: 25.0,
-              width: 25.0,
-              child: CircularProgressIndicator(
-                valueColor:
-                new AlwaysStoppedAnimation<Color>(Colors.white),
-                strokeWidth: 4.0,
-              ),
-            )
-          ],
-        ));
-  }
-
-  Widget _buildErrorWidget(String error) {
-    return Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Text("Error occured: $error"),
-          ],
-        ));
   }
 
   Widget _buildHomeWidget(MovieResponse data) {
@@ -93,7 +71,7 @@ class _HeaderState extends State<Header> {
         height: 220.0,
         child: PageIndicatorContainer(
           align: IndicatorAlign.bottom,
-          length: movies.take(5).length,
+          length: movies.take(10).length,
           indicatorSpace: 8.0,
           padding: const EdgeInsets.all(5.0),
           indicatorColor: Style.Colors.titleColor,

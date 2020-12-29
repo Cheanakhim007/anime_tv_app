@@ -1,4 +1,4 @@
-import 'package:anime_tv_app/screen/home_screen.dart';
+import 'package:anime_tv_app/screen/splash_screen.dart';
 import 'package:flutter/material.dart';
 
 void main() {
@@ -15,7 +15,7 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.blue,
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
-      home: HomeScreen(),
+      home: SplashScreenApp(),
     );
   }
 }

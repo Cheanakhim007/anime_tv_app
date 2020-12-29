@@ -14,11 +14,23 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Style.Colors.mainColor,
+   /*   appBar: PreferredSize(
+        preferredSize: Size.fromHeight(50.0),
+        child: AppBar(
+          backgroundColor: Style.Colors.mainColor,
+          elevation: 0.0,
+          centerTitle: true,
+          title: Text("ANIME MOVIE", style: TextStyle(
+              color: Colors.white
+          ),),
+        ),
+      ),*/
       appBar: AppBar(
         backgroundColor: Style.Colors.mainColor,
         centerTitle: true,
+        elevation: 0.0,
         leading: Icon(EvaIcons.menu2Outline, color: Colors.white,),
-        title: Text("Home Page"),
+        title: Text("ANIME MOVIE"),
         actions: <Widget>[
           IconButton(
               onPressed: () {},
