@@ -1,4 +1,5 @@
 import 'package:anime_tv_app/bloc/botton_navbar_bloc.dart';
+import 'package:anime_tv_app/screen/movies.dart';
 import 'package:flutter/material.dart';
 import 'package:anime_tv_app/style/theme.dart' as Style;
 
@@ -29,7 +30,7 @@ class _MainScreenState extends State<MainScreen> {
               case NavBarItem.HOME:
                 return HomeScreen();
               case NavBarItem.MOVIE:
-                return testScreen();
+                return MoviesScreen();
               case NavBarItem.NEW:
                 return testScreen();
             }
@@ -80,7 +81,7 @@ class _MainScreenState extends State<MainScreen> {
         mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: <Widget>[
-          Text("Test Screen")
+          Text("New Screen")
         ],
       ),
     );

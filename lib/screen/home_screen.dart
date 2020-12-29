@@ -1,4 +1,6 @@
 import 'package:anime_tv_app/widget/header.dart';
+import 'package:anime_tv_app/widget/popular.dart';
+import 'package:anime_tv_app/widget/recent.dart';
 import 'package:eva_icons_flutter/eva_icons_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:anime_tv_app/style/theme.dart' as Style;
@@ -14,22 +16,11 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Style.Colors.mainColor,
-   /*   appBar: PreferredSize(
-        preferredSize: Size.fromHeight(50.0),
-        child: AppBar(
-          backgroundColor: Style.Colors.mainColor,
-          elevation: 0.0,
-          centerTitle: true,
-          title: Text("ANIME MOVIE", style: TextStyle(
-              color: Colors.white
-          ),),
-        ),
-      ),*/
       appBar: AppBar(
         backgroundColor: Style.Colors.mainColor,
         centerTitle: true,
         elevation: 0.0,
-        leading: Icon(EvaIcons.menu2Outline, color: Colors.white,),
+        // leading: Icon(EvaIcons.menu2Outline, color: Colors.white,),
         title: Text("ANIME MOVIE"),
         actions: <Widget>[
           IconButton(
@@ -41,6 +32,8 @@ class _HomeScreenState extends State<HomeScreen> {
       body: ListView(
         children: <Widget>[
           Header(),
+          PopularMovie(),
+          RecentMovie(),
         ],
       ),
     );

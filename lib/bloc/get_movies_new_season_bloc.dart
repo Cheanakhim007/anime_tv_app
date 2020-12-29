@@ -3,13 +3,13 @@ import 'package:anime_tv_app/model/movie_repository.dart';
 import 'package:anime_tv_app/repository/repository.dart';
 import 'package:rxdart/rxdart.dart';
 
-class MoviesBloc {
+class MoviesNewSeasonBloc {
   final MovieRepository _repository = MovieRepository();
   final BehaviorSubject<MovieResponse> _subject =
   BehaviorSubject<MovieResponse>();
 
   getMovies() async {
-    MovieResponse response = await _repository.getMovies();
+    MovieResponse response = await _repository.getNewSeasonMovie();
     _subject.sink.add(response);
   }
 
@@ -20,4 +20,4 @@ class MoviesBloc {
   BehaviorSubject<MovieResponse> get subject => _subject;
 
 }
-final moviesBloc = MoviesBloc();
+final moviesNewSeasonBloc = MoviesNewSeasonBloc();

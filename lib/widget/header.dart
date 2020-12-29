@@ -1,4 +1,4 @@
-import 'package:anime_tv_app/bloc/get_movies_bloc.dart';
+import 'package:anime_tv_app/bloc/get_movies_new_season_bloc.dart';
 import 'package:anime_tv_app/model/movie.dart';
 import 'package:anime_tv_app/model/movie_repository.dart';
 import 'package:flutter/material.dart';
@@ -21,13 +21,13 @@ class _HeaderState extends State<Header> {
   @override
   void initState() {
     super.initState();
-    moviesBloc..getMovies();
+    moviesNewSeasonBloc..getMovies();
   }
 
   @override
   Widget build(BuildContext context) {
     return StreamBuilder<MovieResponse>(
-      stream: moviesBloc.subject.stream,
+      stream: moviesNewSeasonBloc.subject.stream,
       builder: (context, AsyncSnapshot<MovieResponse> snapshot) {
         if (snapshot.hasData) {
           if (snapshot.data.error != null && snapshot.data.error.length > 0) {
