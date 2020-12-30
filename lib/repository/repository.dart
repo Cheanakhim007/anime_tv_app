@@ -61,7 +61,7 @@ class MovieRepository {
 
   Future<MovieResponse> getSearch(String keyword) async {
     try {
-      print("link  ${getSearchUrl}");
+      print("link  ${getSearchUrl} with params $keyword}");
 
       var params = {
         "q": keyword,
