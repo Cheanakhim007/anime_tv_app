@@ -62,7 +62,12 @@ class MovieRepository {
   Future<MovieResponse> getSearch(String keyword) async {
     try {
       print("link  ${getSearchUrl}");
-      Response response = await _dio.get(getSearchUrl);
+
+      var params = {
+        "q": keyword,
+      };
+
+      Response response = await _dio.get(getSearchUrl, queryParameters: params);
       print("Result: ${response.statusCode}");
       return MovieResponse.fromJson(response.data);
     } catch (error, stacktrace) {

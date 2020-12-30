@@ -1,3 +1,4 @@
+import 'package:anime_tv_app/screen/search_screen.dart';
 import 'package:anime_tv_app/widget/header.dart';
 import 'package:anime_tv_app/widget/popular.dart';
 import 'package:anime_tv_app/widget/recent.dart';
@@ -24,7 +25,14 @@ class _HomeScreenState extends State<HomeScreen> {
         title: Text("ANIME MOVIE"),
         actions: <Widget>[
           IconButton(
-              onPressed: () {},
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => SearchScreen(),
+                  ),
+                );
+              },
               icon: Icon(EvaIcons.searchOutline, color: Colors.white,)
           )
         ],

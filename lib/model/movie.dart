@@ -16,4 +16,9 @@ class Movie {
         image = json["image"],
         type = json["type"]
   ;
+
+  @override
+  String toString() {
+    return 'Movie{id: $id, title: $title, image: $image, type: $type}';
+  }
 }

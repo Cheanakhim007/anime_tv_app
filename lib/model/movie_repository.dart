@@ -12,4 +12,9 @@ class MovieResponse {
   MovieResponse.withError(String errorValue)
       : movies = List(),
         error = errorValue;
+
+  @override
+  String toString() {
+    return 'MovieResponse{movies: $movies, error: $error}';
+  }
 }
