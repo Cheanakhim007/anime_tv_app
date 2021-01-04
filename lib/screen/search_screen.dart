@@ -1,12 +1,8 @@
-import 'package:anime_tv_app/bloc/get_search_moview_bloc.dart';
 import 'package:anime_tv_app/model/movie.dart';
 import 'package:anime_tv_app/model/movie_repository.dart';
 import 'package:anime_tv_app/repository/repository.dart';
-import 'package:anime_tv_app/widget/error_widget.dart';
-import 'package:anime_tv_app/widget/loading_widget.dart';
 import 'package:eva_icons_flutter/eva_icons_flutter.dart';
 import 'package:flappy_search_bar/flappy_search_bar.dart';
-import 'package:flappy_search_bar/scaled_tile.dart';
 import 'package:flappy_search_bar/search_bar_style.dart';
 import 'package:flutter/material.dart';
 import 'package:anime_tv_app/style/theme.dart' as Style;
@@ -57,7 +53,7 @@ class _SearchScreenState extends State<SearchScreen> {
               ),
               searchBarStyle: SearchBarStyle(
                   backgroundColor: Colors.grey[800],
-                  borderRadius: BorderRadius.circular(8),
+                  borderRadius: BorderRadius.circular(14),
                   padding: EdgeInsets.symmetric(vertical: 0, horizontal: 5)
               ),
               onSearch: _getALlPosts,
@@ -66,12 +62,12 @@ class _SearchScreenState extends State<SearchScreen> {
               onCancelled: () {
                 print("Cancelled triggered");
               },
-              mainAxisSpacing: 10,
-              crossAxisSpacing: 10,
+              mainAxisSpacing: 0,
+              crossAxisSpacing: 0,
               crossAxisCount: 3,
               onItemFound: (Movie movie, int index){
                  return Padding(
-                  padding: EdgeInsets.all(10),
+                  padding: EdgeInsets.symmetric(horizontal: 10),
                   child: GestureDetector(
                     onTap: () {
 
@@ -114,7 +110,7 @@ class _SearchScreenState extends State<SearchScreen> {
                           width: 100,
                           child: Text(
                             movie.title,
-                            maxLines: 2,
+                            maxLines: 1,
                             textAlign: TextAlign.center,
                             style: TextStyle(
                                 color: Colors.white,

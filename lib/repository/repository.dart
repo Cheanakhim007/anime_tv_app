@@ -1,4 +1,5 @@
 
+import 'package:anime_tv_app/model/home_repository.dart';
 import 'package:anime_tv_app/model/movie_repository.dart';
 import 'package:dio/dio.dart';
 
@@ -10,6 +11,7 @@ class MovieRepository {
   var getRecentUrl = '$mainUrl/recent';
   var getMoviewUrl = '$mainUrl/movie';
   var getSearchUrl = '$mainUrl/search';
+  var getHomeUrl = '$mainUrl/home';
 
   Future<MovieResponse> getNewSeasonMovie() async {
     try {
@@ -73,6 +75,18 @@ class MovieRepository {
     } catch (error, stacktrace) {
       print("Exception occured: $error stackTrace: $stacktrace");
       return MovieResponse.withError("$error");
+    }
+  }
+
+  Future<HomeResponse> getMoviesHomePage() async {
+    try {
+      print("link  ${getHomeUrl}");
+      Response response = await _dio.get(getHomeUrl);
+      print("Result: ${response.statusCode}");
+      return HomeResponse.fromJson(response.data);
+    } catch (error, stacktrace) {
+      print("Exception occured: $error stackTrace: $stacktrace");
+      return HomeResponse.withError("$error");
     }
   }
 
