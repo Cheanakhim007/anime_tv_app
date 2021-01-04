@@ -11,7 +11,8 @@ import 'loading_widget.dart';
 
 class PopularMovie extends StatefulWidget {
   final List<Movie> movie;
-  PopularMovie(this.movie);
+  final String label;
+  PopularMovie({this.movie, this.label});
   @override
   _PopularMovieState createState() => _PopularMovieState();
 }
@@ -67,19 +68,16 @@ class _PopularMovieState extends State<PopularMovie> {
       return Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          SizedBox(
-            height: 5.0,
-          ),
           Container(
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Padding(
                   padding: const EdgeInsets.only(left: 10.0, top: 20.0),
-                  child: Text("BEST POPULAR MOVIES", style: TextStyle(
-                      color: Style.Colors.titleColor,
+                  child: Text(widget.label, style: TextStyle(
+                      color: Style.Colors.background,
                       fontWeight: FontWeight.w800,
-                      fontSize: 12.0
+                      fontSize: 14.0
                   ),),
                 ),
                 
@@ -97,7 +95,7 @@ class _PopularMovieState extends State<PopularMovie> {
             height: 5.0,
           ),
           Container(
-            height: 270.0,
+            height: 245.0,
             padding: EdgeInsets.only(left: 10.0),
             child: ListView.builder(
               scrollDirection: Axis.horizontal,

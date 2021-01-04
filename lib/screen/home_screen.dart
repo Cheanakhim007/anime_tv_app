@@ -63,9 +63,10 @@ class _HomeScreenState extends State<HomeScreen> {
             return  ListView(
               children: <Widget>[
                 Header(newSeason),
-                PopularMovie(popular),
-                PopularMovie(dub),
-                PopularMovie(chinese),
+                PopularMovie( movie: popular, label: "POPULAR",),
+                PopularMovie(movie: recent , label :"RECENT"),
+                PopularMovie(movie: dub , label :"DUB"),
+                PopularMovie(movie: chinese, label :"CHINESE"),
                 // RecentMovie(),
               ],
             );

@@ -58,6 +58,56 @@ class _SearchScreenState extends State<SearchScreen> {
               ),
               onSearch: _getALlPosts,
               searchBarController: _searchBarController,
+              emptyWidget: Center(
+                child: Column(
+                  children: [
+                    SizedBox(height: 40),
+                    Container(
+                      decoration: BoxDecoration(
+                        color: Colors.grey,
+                        borderRadius: BorderRadius.circular(50),
+                      ),
+                      child: Padding(
+                        padding: const EdgeInsets.all(6.0),
+                        child: Icon(Icons.search, color: Colors.white, size: 50),
+                      ),
+                    ),
+                    SizedBox(height: 10),
+                    Text("Search not found", style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 14,
+                        letterSpacing: 1,
+                        fontWeight: FontWeight.bold,
+                        height: 1.5
+                    ),)
+                  ],
+                ),
+              ),
+              placeHolder: Center(
+                child: Column(
+                  children: [
+                    SizedBox(height: 40),
+                    Container(
+                      decoration: BoxDecoration(
+                        color: Colors.grey,
+                        borderRadius: BorderRadius.circular(50),
+                      ),
+                      child: Padding(
+                        padding: const EdgeInsets.all(6.0),
+                        child: Icon(Icons.search, color: Colors.white, size: 50),
+                      ),
+                    ),
+                    SizedBox(height: 10),
+                    Text("Please input word do want to search", style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 14,
+                      letterSpacing: 1,
+                      fontWeight: FontWeight.bold,
+                      height: 1.5
+                    ),)
+                  ],
+                ),
+              ),
               cancellationWidget: Text("Cancel", style: TextStyle(color: Colors.white)),
               onCancelled: () {
                 print("Cancelled triggered");
@@ -66,8 +116,9 @@ class _SearchScreenState extends State<SearchScreen> {
               crossAxisSpacing: 0,
               crossAxisCount: 3,
               onItemFound: (Movie movie, int index){
+                print("ooooo ${movie}");
                  return Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 10),
+                  padding: EdgeInsets.symmetric(horizontal: 10, vertical: 3),
                   child: GestureDetector(
                     onTap: () {
 
@@ -115,7 +166,7 @@ class _SearchScreenState extends State<SearchScreen> {
                             style: TextStyle(
                                 color: Colors.white,
                                 fontWeight: FontWeight.bold,
-                                fontSize: 11.0),
+                                fontSize: 12.0),
                           ),
                         ),
                       ],

@@ -70,8 +70,11 @@ class MovieRepository {
       };
 
       Response response = await _dio.get(getSearchUrl, queryParameters: params);
-      print("Result: ${response.statusCode}");
-      return MovieResponse.fromJson(response.data);
+      print("Result: ${response.data}");
+      if(response.data['code'] == 200)
+         return MovieResponse.fromJson(response.data['result']['data']);
+      else
+        return MovieResponse.withError("No movie");
     } catch (error, stacktrace) {
       print("Exception occured: $error stackTrace: $stacktrace");
       return MovieResponse.withError("$error");
@@ -83,7 +86,7 @@ class MovieRepository {
       print("link  ${getHomeUrl}");
       Response response = await _dio.get(getHomeUrl);
       print("Result: ${response.statusCode}");
-      return HomeResponse.fromJson(response.data[0]);
+      return HomeResponse.fromJson(response.data);
     } catch (error, stacktrace) {
       print("Exception occured: $error stackTrace: $stacktrace");
       return HomeResponse.withError("$error");
