@@ -10,6 +10,8 @@ import 'error_widget.dart';
 import 'loading_widget.dart';
 
 class PopularMovie extends StatefulWidget {
+  final List<Movie> movie;
+  PopularMovie(this.movie);
   @override
   _PopularMovieState createState() => _PopularMovieState();
 }
@@ -19,11 +21,12 @@ class _PopularMovieState extends State<PopularMovie> {
   @override
   void initState() {
     super.initState();
-    moviesPopularBloc..getMoviesPopular();
+    // moviesPopularBloc..getMoviesPopular();
   }
   @override
   Widget build(BuildContext context) {
-    return StreamBuilder<MovieResponse>(
+    return _buildPopularWidget(widget.movie);
+  /*  return StreamBuilder<MovieResponse>(
       stream: moviesPopularBloc.subject.stream,
       builder: (context, AsyncSnapshot<MovieResponse> snapshot) {
         if (snapshot.hasData) {
@@ -37,11 +40,10 @@ class _PopularMovieState extends State<PopularMovie> {
           return Loading.buildLoadingWidget();
         }
       },
-    );
+    );*/
   }
 
-  Widget _buildPopularWidget(MovieResponse data) {
-    List<Movie> movies = data.movies;
+  Widget _buildPopularWidget( List<Movie> movies) {
     if (movies.length == 0) {
       return Container(
         width: MediaQuery.of(context).size.width,

@@ -10,6 +10,9 @@ import 'error_widget.dart';
 import 'loading_widget.dart';
 
 class Header extends StatefulWidget {
+  final List<Movie> movie;
+  Header(this.movie);
+
   @override
   _HeaderState createState() => _HeaderState();
 }
@@ -21,12 +24,13 @@ class _HeaderState extends State<Header> {
   @override
   void initState() {
     super.initState();
-    moviesNewSeasonBloc..getMovies();
+    // moviesNewSeasonBloc..getMovies();
   }
 
   @override
   Widget build(BuildContext context) {
-    return StreamBuilder<MovieResponse>(
+    return _buildHomeWidget(widget.movie);
+ /*   return StreamBuilder<MovieResponse>(
       stream: moviesNewSeasonBloc.subject.stream,
       builder: (context, AsyncSnapshot<MovieResponse> snapshot) {
         if (snapshot.hasData) {
@@ -43,11 +47,10 @@ class _HeaderState extends State<Header> {
           );
         }
       },
-    );
+    );*/
   }
 
-  Widget _buildHomeWidget(MovieResponse data) {
-    List<Movie> movies = data.movies;
+  Widget _buildHomeWidget(List<Movie> movies) {
     if (movies.length == 0) {
       return Container(
         width: MediaQuery.of(context).size.width,
@@ -71,7 +74,7 @@ class _HeaderState extends State<Header> {
         height: 220.0,
         child: PageIndicatorContainer(
           align: IndicatorAlign.bottom,
-          length: movies.take(10).length,
+          length: movies.length,
           indicatorSpace: 8.0,
           padding: const EdgeInsets.all(5.0),
           indicatorColor: Style.Colors.titleColor,
@@ -80,7 +83,7 @@ class _HeaderState extends State<Header> {
           child: PageView.builder(
             controller: pageController,
             scrollDirection: Axis.horizontal,
-            itemCount: movies.take(5).length,
+            itemCount: movies.length,
             itemBuilder: (context, index) {
               return GestureDetector(
                 onTap: () {

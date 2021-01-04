@@ -83,7 +83,7 @@ class MovieRepository {
       print("link  ${getHomeUrl}");
       Response response = await _dio.get(getHomeUrl);
       print("Result: ${response.statusCode}");
-      return HomeResponse.fromJson(response.data);
+      return HomeResponse.fromJson(response.data[0]);
     } catch (error, stacktrace) {
       print("Exception occured: $error stackTrace: $stacktrace");
       return HomeResponse.withError("$error");

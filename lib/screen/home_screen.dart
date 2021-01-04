@@ -55,13 +55,18 @@ class _HomeScreenState extends State<HomeScreen> {
             if (snapshot.data.error != null && snapshot.data.error.length > 0) {
               return BuildError.buildErrorWidget(snapshot.data.error);
             }
-            List<Movie>  newS = snapshot.data.newSeason;
-            print("-------> ${newS}");
+            List<Movie>  newSeason = snapshot.data.newSeason;
+            List<Movie>  popular = snapshot.data.popular;
+            List<Movie>  recent = snapshot.data.recent;
+            List<Movie>  dub = snapshot.data.dub;
+            List<Movie>  chinese = snapshot.data.chinese;
             return  ListView(
               children: <Widget>[
-                Header(),
-                PopularMovie(),
-                RecentMovie(),
+                Header(newSeason),
+                PopularMovie(popular),
+                PopularMovie(dub),
+                PopularMovie(chinese),
+                // RecentMovie(),
               ],
             );
           } else if (snapshot.hasError) {
