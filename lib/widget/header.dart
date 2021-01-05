@@ -1,5 +1,6 @@
 import 'package:anime_tv_app/bloc/get_movies_new_season_bloc.dart';
 import 'package:anime_tv_app/model/movie.dart';
+import 'package:anime_tv_app/model/movie_detail_screen.dart';
 import 'package:anime_tv_app/model/movie_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -87,7 +88,10 @@ class _HeaderState extends State<Header> {
             itemBuilder: (context, index) {
               return GestureDetector(
                 onTap: () {
-
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => MovieDetail()),
+                  );
                 },
                 child: Stack(
                   children: <Widget>[

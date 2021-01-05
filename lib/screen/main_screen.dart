@@ -1,5 +1,7 @@
+import 'dart:async';
 import 'package:anime_tv_app/bloc/botton_navbar_bloc.dart';
 import 'package:anime_tv_app/screen/movies.dart';
+import 'package:data_connection_checker/data_connection_checker.dart';
 import 'package:flutter/material.dart';
 import 'package:anime_tv_app/style/theme.dart' as Style;
 
@@ -12,11 +14,58 @@ class MainScreen extends StatefulWidget {
 
 class _MainScreenState extends State<MainScreen> {
   BottomNavBarBloc _bottomNavBarBloc;
+  StreamSubscription<DataConnectionStatus> listener;
+  var InternetStatus = "Unknown";
+  var contentmessage = "Unknown";
   @override
   void initState() {
     super.initState();
     _bottomNavBarBloc = BottomNavBarBloc();
+    checkConnection(context);
   }
+
+  @override
+  void dispose() {
+    super.dispose();
+  }
+
+  checkConnection(BuildContext context) async{
+    listener = DataConnectionChecker().onStatusChange.listen((status) {
+      switch (status){
+        case DataConnectionStatus.connected:
+          InternetStatus = "Connected to the Internet";
+          contentmessage = "Connected to the Internet";
+          print("------> ${InternetStatus}");
+          break;
+        case DataConnectionStatus.disconnected:
+          InternetStatus = "Network Error ";
+          contentmessage = "Please check your network condition and try again.";
+          _showDialog(InternetStatus,contentmessage,context);
+          break;
+      }
+    });
+    return await DataConnectionChecker().connectionStatus;
+  }
+
+  void _showDialog(String title,String content ,BuildContext context) {
+    showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+              title: new Text(title),
+              content: new Text(content),
+              actions: <Widget>[
+                new FlatButton(
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                    child: new Text("Close"))
+              ]
+          );
+        }
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(

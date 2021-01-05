@@ -98,11 +98,11 @@ class _SearchScreenState extends State<SearchScreen> {
                       ),
                     ),
                     SizedBox(height: 10),
-                    Text("Please input word do want to search", style: TextStyle(
+                    Text("Enter a few words to search in ANIME MOVIE", style: TextStyle(
                       color: Colors.white,
                       fontSize: 14,
-                      letterSpacing: 1,
-                      fontWeight: FontWeight.bold,
+                      letterSpacing: 0.5,
+                      fontWeight: FontWeight.w400,
                       height: 1.5
                     ),)
                   ],
