@@ -49,12 +49,15 @@ class MovieRepository {
     }
   }
 
-  Future<MovieResponse> getMovies() async {
+  Future<MovieResponse> getMovies({int countPage = 1}) async {
     try {
-      print("link  ${getMoviewUrl}");
-      Response response = await _dio.get(getMoviewUrl);
+      print("link  ${getMoviewUrl + "?page=${countPage.toString()}"}");
+      Response response = await _dio.get(getMoviewUrl + "?page=${countPage.toString()}");
       print("Result: ${response.statusCode}");
-      return MovieResponse.fromJson(response.data);
+      if(response.data['code'] == 200)
+         return MovieResponse.fromJson(response.data['result']['data']);
+      else
+        return  MovieResponse.withError("${response.data['code']}");
     } catch (error, stacktrace) {
       print("Exception occured: $error stackTrace: $stacktrace");
       return MovieResponse.withError("$error");
@@ -86,7 +89,7 @@ class MovieRepository {
       print("link  ${getHomeUrl}");
       Response response = await _dio.get(getHomeUrl);
       print("Result: ${response.statusCode}");
-      return HomeResponse.fromJson(response.data);
+      return HomeResponse.fromJson(response.data['result']['data']);
     } catch (error, stacktrace) {
       print("Exception occured: $error stackTrace: $stacktrace");
       return HomeResponse.withError("$error");
