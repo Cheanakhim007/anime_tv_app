@@ -6,7 +6,7 @@ class BuildError {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Text("Error occured: $error"),
+            Text("Error occured: $error", style: TextStyle(color: Colors.white, fontSize: 14),),
           ],
         ));
   }
