@@ -1,6 +1,7 @@
 import 'package:anime_tv_app/bloc/get_popular_movies_bloc.dart';
 import 'package:anime_tv_app/model/movie.dart';
 import 'package:anime_tv_app/model/movie_repository.dart';
+import 'package:anime_tv_app/screen/movies.dart';
 import 'package:eva_icons_flutter/eva_icons_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:anime_tv_app/style/theme.dart' as Style;
@@ -85,7 +86,12 @@ class _PopularMovieState extends State<PopularMovie> {
                   child: IconButton(
                     padding: EdgeInsets.only(top: 20.0),
                       icon: Icon(Icons.widgets_outlined, color: Style.Colors.background,),
-                      onPressed: (){}
+                      onPressed: (){
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => MoviesScreen(status: widget.label)),
+                        );
+                      }
                       ),
                 )
               ],

@@ -79,7 +79,7 @@ class _MainScreenState extends State<MainScreen> {
               case NavBarItem.HOME:
                 return HomeScreen();
               case NavBarItem.MOVIE:
-                return MoviesScreen();
+                return MoviesScreen(status: "movies");
               case NavBarItem.NEW:
                 return testScreen();
             }

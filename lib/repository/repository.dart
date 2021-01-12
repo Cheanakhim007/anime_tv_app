@@ -12,6 +12,7 @@ class MovieRepository {
   var getMoviewUrl = '$mainUrl/movie';
   var getSearchUrl = '$mainUrl/search';
   var getHomeUrl = '$mainUrl/home';
+  var getDubUrl = '$mainUrl/dub';
 
   Future<MovieResponse> getNewSeasonMovie() async {
     try {
@@ -25,24 +26,30 @@ class MovieRepository {
     }
   }
 
-  Future<MovieResponse> getPopularMovies() async {
+  Future<MovieResponse> getPopularMovies({int countPage}) async {
     try {
-      print("link  ${getPopularUrl}");
-      Response response = await _dio.get(getPopularUrl);
+      print("link  ${getPopularUrl + "?page=${countPage.toString()}"}");
+      Response response = await _dio.get(getPopularUrl + "?page=${countPage.toString()}");
       print("Result: ${response.statusCode}");
-      return MovieResponse.fromJson(response.data);
+      if(response.data['code'] == 200)
+        return MovieResponse.fromJson(response.data['result']['data']);
+      else
+        return  MovieResponse.withError("${response.data['code']}");
     } catch (error, stacktrace) {
       print("Exception occured: $error stackTrace: $stacktrace");
       return MovieResponse.withError("$error");
     }
   }
 
-  Future<MovieResponse> getRecenMovies() async {
+  Future<MovieResponse> getRecenMovies({int countPage}) async {
     try {
-      print("link  ${getRecentUrl}");
-      Response response = await _dio.get(getRecentUrl);
+      print("link  ${getRecentUrl + "?page=${countPage.toString()}"}");
+      Response response = await _dio.get(getRecentUrl + "?page=${countPage.toString()}");
       print("Result: ${response.statusCode}");
-      return MovieResponse.fromJson(response.data);
+      if(response.data['code'] == 200)
+        return MovieResponse.fromJson(response.data['result']['data']);
+      else
+        return  MovieResponse.withError("${response.data['code']}");
     } catch (error, stacktrace) {
       print("Exception occured: $error stackTrace: $stacktrace");
       return MovieResponse.withError("$error");
@@ -56,6 +63,21 @@ class MovieRepository {
       print("Result: ${response.statusCode}");
       if(response.data['code'] == 200)
          return MovieResponse.fromJson(response.data['result']['data']);
+      else
+        return  MovieResponse.withError("${response.data['code']}");
+    } catch (error, stacktrace) {
+      print("Exception occured: $error stackTrace: $stacktrace");
+      return MovieResponse.withError("$error");
+    }
+  }
+
+  Future<MovieResponse> getDubMovies({int countPage = 1}) async {
+    try {
+      print("link  ${getDubUrl + "?page=${countPage.toString()}"}");
+      Response response = await _dio.get(getDubUrl + "?page=${countPage.toString()}");
+      print("Result: ${response.statusCode}");
+      if(response.data['code'] == 200)
+        return MovieResponse.fromJson(response.data['result']['data']);
       else
         return  MovieResponse.withError("${response.data['code']}");
     } catch (error, stacktrace) {

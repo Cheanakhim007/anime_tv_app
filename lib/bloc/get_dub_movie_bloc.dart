@@ -1,12 +1,15 @@
+
 import 'package:anime_tv_app/model/movie_repository.dart';
 import 'package:anime_tv_app/repository/repository.dart';
 import 'package:rxdart/rxdart.dart';
 
-class MoviesBloc {
+class MoviesDubListBloc {
   final MovieRepository _repository = MovieRepository();
-  final BehaviorSubject<MovieResponse> _subject = BehaviorSubject<MovieResponse>();
-  getMovies({int countPage}) async {
-    MovieResponse response = await _repository.getMovies(countPage: countPage);
+  final BehaviorSubject<MovieResponse> _subject =
+  BehaviorSubject<MovieResponse>();
+
+  getMoviesDub({int countPage}) async {
+    MovieResponse response = await _repository.getDubMovies(countPage: countPage);
     _subject.sink.add(response);
   }
 
@@ -16,9 +19,5 @@ class MoviesBloc {
 
   BehaviorSubject<MovieResponse> get subject => _subject;
 
-  @override
-  String toString() {
-    return 'MoviesBloc{_subject: $_subject}';
-  }
 }
-final moviesBloc = MoviesBloc();
+final moviesDubBloc = MoviesDubListBloc();

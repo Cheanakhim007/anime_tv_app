@@ -1,4 +1,7 @@
+import 'package:anime_tv_app/bloc/get_dub_movie_bloc.dart';
 import 'package:anime_tv_app/bloc/get_movies_bloc.dart';
+import 'package:anime_tv_app/bloc/get_popular_movies_bloc.dart';
+import 'package:anime_tv_app/bloc/get_rescent_movie_bloc.dart';
 import 'package:anime_tv_app/model/movie.dart';
 import 'package:anime_tv_app/model/movie_repository.dart';
 import 'package:anime_tv_app/widget/error_widget.dart';
@@ -6,8 +9,14 @@ import 'package:anime_tv_app/widget/loading_widget.dart';
 import 'package:eva_icons_flutter/eva_icons_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:anime_tv_app/style/theme.dart' as Style;
+import 'package:rxdart/src/streams/value_stream.dart';
 
 class MoviesScreen extends StatefulWidget {
+  final String status;
+  MoviesScreen({
+    @required this.status
+});
+
   @override
   _MoviesScreenState createState() => _MoviesScreenState();
 }
@@ -27,7 +36,27 @@ class _MoviesScreenState extends State<MoviesScreen> {
     _isLoading = false;
     _scrollController = new ScrollController();
     _scrollController.addListener(_scrollListener);
-    moviesBloc..getMovies(countPage: _countPage);
+    getData();
+  }
+
+  void getData(){
+    switch(widget.status){
+      case "movies" :
+        moviesBloc..getMovies(countPage: _countPage);
+        break;
+      case "POPULAR" :
+        moviesPopularBloc..getMoviesPopular(countPage: _countPage);
+        break;
+      case "RECENT" :
+        moviesRecentBloc..getMoviesRecent(countPage: _countPage);
+        break;
+      case "DUB" :
+        moviesDubBloc..getMoviesDub(countPage: _countPage);
+        break;
+      case "CHINESE" :
+        moviesBloc..getMovies(countPage: _countPage);
+        break;
+    }
   }
 
   @override
@@ -42,11 +71,13 @@ class _MoviesScreenState extends State<MoviesScreen> {
     if ( maxScroll - currentScroll <= delta && maxScroll > 0) {
         if (!_isLoading && !_stopRequest) {
           _countPage += 1;
-          _isLoading = true;
-          moviesBloc..getMovies(countPage: _countPage);
-          Future.delayed(Duration(milliseconds: 10)).then((value) {
+          setState(() {
+            _isLoading = true;
+          });
+          getData();
+          Future.delayed(Duration(seconds: 2)).then((value) {
               _isLoading = false;
-            setState(() {});
+               setState(() {});
          });
         }
     }
@@ -66,7 +97,7 @@ class _MoviesScreenState extends State<MoviesScreen> {
       ),
       body: SafeArea(
         child: StreamBuilder<MovieResponse>(
-          stream: moviesBloc.subject.stream,
+          stream: getStream(),
           builder: (context, AsyncSnapshot<MovieResponse> snapshot) {
             if (snapshot.hasData) {
               if (snapshot.data.error != null && snapshot.data.error.length > 0 && snapshot.hasError && _countPage == 1) {
@@ -84,8 +115,29 @@ class _MoviesScreenState extends State<MoviesScreen> {
     );
   }
 
+  ValueStream<MovieResponse> getStream(){
+    switch(widget.status){
+      case "movies" :
+        return moviesBloc.subject.stream;
+      case "POPULAR" :
+        return moviesPopularBloc.subject.stream;
+      case "RECENT" :
+        return moviesRecentBloc.subject.stream;
+        break;
+      case "DUB" :
+        return moviesDubBloc.subject.stream;
+        break;
+      case "CHINESE" :
+        return moviesBloc.subject.stream;
+        break;
+    }
+  }
+
   Widget _buildMoviesWidget(MovieResponse data) {
-    _movies.addAll(data.movies);
+    if(_movies.toString() != data.movies.toString())
+          _movies.addAll(data.movies);
+    // remove duplicates movies
+    _movies = [...{..._movies}];
     if (_movies.length == 0) {
       return Container(
         width: MediaQuery.of(context).size.width,
@@ -111,10 +163,8 @@ class _MoviesScreenState extends State<MoviesScreen> {
         itemCount: _movies.length + 1,
         controller: _scrollController,
         gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount: (orientation == Orientation.portrait) ? 3 : 4,
-          childAspectRatio: MediaQuery.of(context).size.width /
-              (MediaQuery.of(context).size.height / 1),),
-
+        crossAxisCount: (orientation == Orientation.portrait) ? 3 : 4,
+        childAspectRatio: MediaQuery.of(context).size.width / (MediaQuery.of(context).size.height / 1),),
         itemBuilder: (context, index) {
           if(index == _movies.length)
             return _isLoading ? Column(

@@ -8,8 +8,8 @@ class MoviesPopularListBloc {
   final BehaviorSubject<MovieResponse> _subject =
   BehaviorSubject<MovieResponse>();
 
-  getMoviesPopular() async {
-    MovieResponse response = await _repository.getPopularMovies();
+  getMoviesPopular({int countPage}) async {
+    MovieResponse response = await _repository.getPopularMovies(countPage: countPage);
     _subject.sink.add(response);
   }
 

@@ -8,8 +8,8 @@ class MoviesRecentListBloc {
   final BehaviorSubject<MovieResponse> _subject =
   BehaviorSubject<MovieResponse>();
 
-  getMoviesRecent() async {
-    MovieResponse response = await _repository.getRecenMovies();
+  getMoviesRecent({int countPage}) async {
+    MovieResponse response = await _repository.getRecenMovies(countPage: countPage);
     _subject.sink.add(response);
   }
 

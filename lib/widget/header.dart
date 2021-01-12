@@ -1,14 +1,11 @@
 import 'package:anime_tv_app/bloc/get_movies_new_season_bloc.dart';
 import 'package:anime_tv_app/model/movie.dart';
-import 'package:anime_tv_app/model/movie_detail_screen.dart';
+import 'file:///C:/Users/Nakhim007/Desktop/App/anime_tv_app/lib/screen/movie_detail_screen.dart';
 import 'package:anime_tv_app/model/movie_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:anime_tv_app/style/theme.dart' as Style;
 import 'package:page_indicator/page_indicator.dart';
-
-import 'error_widget.dart';
-import 'loading_widget.dart';
 
 class Header extends StatefulWidget {
   final List<Movie> movie;
