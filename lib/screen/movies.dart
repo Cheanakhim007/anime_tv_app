@@ -1,9 +1,11 @@
+import 'package:anime_tv_app/bloc/get_chinese_movie_bloc.dart';
 import 'package:anime_tv_app/bloc/get_dub_movie_bloc.dart';
 import 'package:anime_tv_app/bloc/get_movies_bloc.dart';
 import 'package:anime_tv_app/bloc/get_popular_movies_bloc.dart';
 import 'package:anime_tv_app/bloc/get_rescent_movie_bloc.dart';
 import 'package:anime_tv_app/model/movie.dart';
 import 'package:anime_tv_app/model/movie_repository.dart';
+import 'package:anime_tv_app/screen/search_screen.dart';
 import 'package:anime_tv_app/widget/error_widget.dart';
 import 'package:anime_tv_app/widget/loading_widget.dart';
 import 'package:eva_icons_flutter/eva_icons_flutter.dart';
@@ -54,7 +56,7 @@ class _MoviesScreenState extends State<MoviesScreen> {
         moviesDubBloc..getMoviesDub(countPage: _countPage);
         break;
       case "CHINESE" :
-        moviesBloc..getMovies(countPage: _countPage);
+        moviesChineseBloc..getMoviesChinese(countPage: _countPage);
         break;
     }
   }
@@ -93,7 +95,20 @@ class _MoviesScreenState extends State<MoviesScreen> {
         centerTitle: true,
         elevation: 0.0,
         // leading: Icon(EvaIcons.menu2Outline, color: Colors.white,),
-        title: Text("Movies List"),
+        title: Text(widget.status.toUpperCase() + " MOVIE"),
+           actions: <Widget>[
+             IconButton(
+                 onPressed: () {
+                   Navigator.push(
+                     context,
+                     MaterialPageRoute(
+                       builder: (context) => SearchScreen(),
+                     ),
+                   );
+                 },
+                 icon: Icon(EvaIcons.searchOutline, color: Colors.white,)
+             )
+           ],
       ),
       body: SafeArea(
         child: StreamBuilder<MovieResponse>(
@@ -128,7 +143,7 @@ class _MoviesScreenState extends State<MoviesScreen> {
         return moviesDubBloc.subject.stream;
         break;
       case "CHINESE" :
-        return moviesBloc.subject.stream;
+        return moviesChineseBloc.subject.stream;
         break;
     }
   }
@@ -158,80 +173,89 @@ class _MoviesScreenState extends State<MoviesScreen> {
       );
     } else{
       final orientation = MediaQuery.of(context).orientation;
-      return GridView.builder(
-        scrollDirection: Axis.vertical,
-        itemCount: _movies.length + 1,
-        controller: _scrollController,
-        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: (orientation == Orientation.portrait) ? 3 : 4,
-        childAspectRatio: MediaQuery.of(context).size.width / (MediaQuery.of(context).size.height / 1),),
-        itemBuilder: (context, index) {
-          if(index == _movies.length)
-            return _isLoading ? Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Loading.buildLoadingWidget(),
-              ],
-            ) : Container();
-          return Padding(
-            padding: EdgeInsets.all(10),
-            child: GestureDetector(
-              onTap: () {
+      return Column(
+        children: [
+          Expanded(
+            child: GridView.builder(
+              scrollDirection: Axis.vertical,
+              itemCount: _movies.length + 1,
+              controller: _scrollController,
+              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: (orientation == Orientation.portrait) ? 3 : 4,
+              childAspectRatio: (orientation == Orientation.portrait)
+                  ? MediaQuery.of(context).size.width / (MediaQuery.of(context).size.height / 1)
+                  : MediaQuery.of(context).size.width / (MediaQuery.of(context).size.height / 0.4)),
+              itemBuilder: (context, index) {
+                if(index == _movies.length)
+                  return Container();
+                return Padding(
+                  padding: EdgeInsets.all(10),
+                  child: GestureDetector(
+                    onTap: () {
 
-              },
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: <Widget>[
-                  _movies[index].image == null ?
-                  Container(
-                    width: 120.0,
-                    height: 180.0,
-                    decoration: new BoxDecoration(
-                      color: Style.Colors.secondColor,
-                      borderRadius:
-                      BorderRadius.all(Radius.circular(2.0)),
-                      shape: BoxShape.rectangle,
-                    ),
+                    },
                     child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: <Widget>[
-                        Icon(EvaIcons.filmOutline, color: Colors.white, size: 60.0,)
+                        _movies[index].image == null ?
+                        Container(
+                          width: 120.0,
+                          height: 180.0,
+                          decoration: new BoxDecoration(
+                            color: Style.Colors.secondColor,
+                            borderRadius:
+                            BorderRadius.all(Radius.circular(2.0)),
+                            shape: BoxShape.rectangle,
+                          ),
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: <Widget>[
+                              Icon(EvaIcons.filmOutline, color: Colors.white, size: 60.0,)
+                            ],
+                          ),
+                        ):
+                        Container(
+                            width: 120.0,
+                            height: 170.0,
+                            decoration: new BoxDecoration(
+                              borderRadius:
+                              BorderRadius.all(Radius.circular(4.0)),
+                              shape: BoxShape.rectangle,
+                              image: new DecorationImage(
+                                  fit: BoxFit.cover,
+                                  image: NetworkImage(_movies[index].image)),
+                            )),
+                        SizedBox(
+                          height: 10.0,
+                        ),
+                        Expanded(
+                          child: Container(
+                            width: 100,
+                            child: Text(
+                              _movies[index].title,
+                              maxLines: 2,
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 11.0),
+                            ),
+                          ),
+                        ),
                       ],
                     ),
-                  ):
-                  Container(
-                      width: 120.0,
-                      height: 170.0,
-                      decoration: new BoxDecoration(
-                        borderRadius:
-                        BorderRadius.all(Radius.circular(4.0)),
-                        shape: BoxShape.rectangle,
-                        image: new DecorationImage(
-                            fit: BoxFit.cover,
-                            image: NetworkImage(_movies[index].image)),
-                      )),
-                  SizedBox(
-                    height: 10.0,
                   ),
-                  Expanded(
-                    child: Container(
-                      width: 100,
-                      child: Text(
-                        _movies[index].title,
-                        maxLines: 2,
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                            color: Colors.white,
-                            fontWeight: FontWeight.bold,
-                            fontSize: 11.0),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
+                );
+              },
             ),
-          );
-        },
+          ),
+          _isLoading
+              ? Padding(
+                padding: const EdgeInsets.all(6),
+                child: Loading.buildLoadingWidget(),
+              )
+              : Container(),
+        ],
       );
     }
   }

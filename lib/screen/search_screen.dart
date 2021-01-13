@@ -14,24 +14,57 @@ class SearchScreen extends StatefulWidget {
 
 class _SearchScreenState extends State<SearchScreen> {
   final SearchBarController<Movie> _searchBarController = SearchBarController();
+  List<Movie> _movies;
   bool isReplay = false;
+  ScrollController _scrollController;
+  int _countPage = 1;
+  bool _stopRequest = false;
+  bool _isLoading = false;
+  String _text = "";
   // List<Movie> movies = [];
 
 
   @override
   void initState() {
+    _movies = [];
+    _stopRequest = false;
+    _isLoading = false;
+    _scrollController = new ScrollController();
+    _scrollController.addListener(_scrollListener);
     super.initState();
   }
 
+  void _scrollListener() async {
+    double maxScroll = _scrollController.position.maxScrollExtent;
+    double currentScroll = _scrollController.position.pixels;
+    double delta = 700;
+    if ( maxScroll - currentScroll <= delta && maxScroll > 0) {
+      if (!_isLoading && !_stopRequest) {
+        _countPage += 1;
+        setState(() {
+          _isLoading = true;
+        });
+        final MovieRepository _repository = MovieRepository();
+        MovieResponse response = await _repository.getSearch(_text, countPage: _countPage);
+        Future.delayed(Duration(seconds: 2)).then((value) {
+          _isLoading = false;
+          setState(() {});
+        });
+      }
+    }
+  }
+
   Future<List<Movie>> _getALlPosts(String text) async {
+    _text = text;
     await Future.delayed(Duration(seconds: text.length == 4 ? 4 : 1));
     final MovieRepository _repository = MovieRepository();
-    MovieResponse response = await _repository.getSearch(text);
+    MovieResponse response = await _repository.getSearch(text, countPage: _countPage);
     return response.movies;
   }
 
   @override
   Widget build(BuildContext context) {
+    final orientation = MediaQuery.of(context).orientation;
     return Scaffold(
       backgroundColor: Style.Colors.mainColor,
       body: SafeArea(
@@ -114,9 +147,8 @@ class _SearchScreenState extends State<SearchScreen> {
               },
               mainAxisSpacing: 0,
               crossAxisSpacing: 0,
-              crossAxisCount: 3,
+              crossAxisCount: (orientation == Orientation.portrait) ? 3 : 4,
               onItemFound: (Movie movie, int index){
-                print("ooooo ${movie}");
                  return Padding(
                   padding: EdgeInsets.symmetric(horizontal: 10, vertical: 3),
                   child: GestureDetector(
@@ -185,7 +217,6 @@ class _SearchScreenState extends State<SearchScreen> {
                   },
                 )
             ),
-
           ],
         ),
       ),
