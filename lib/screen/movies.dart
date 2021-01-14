@@ -187,7 +187,10 @@ class _MoviesScreenState extends State<MoviesScreen> {
                   : MediaQuery.of(context).size.width / (MediaQuery.of(context).size.height / 0.4)),
               itemBuilder: (context, index) {
                 if(index == _movies.length)
-                  return Container();
+                  return Padding(
+                    padding: const EdgeInsets.all(6),
+                    child: Loading.buildLoadingWidget(),
+                  );
                 return Padding(
                   padding: EdgeInsets.all(10),
                   child: GestureDetector(
@@ -249,12 +252,6 @@ class _MoviesScreenState extends State<MoviesScreen> {
               },
             ),
           ),
-          _isLoading
-              ? Padding(
-                padding: const EdgeInsets.all(6),
-                child: Loading.buildLoadingWidget(),
-              )
-              : Container(),
         ],
       );
     }
