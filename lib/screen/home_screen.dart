@@ -52,7 +52,19 @@ class _HomeScreenState extends State<HomeScreen> {
         builder: (context, snapshot) {
           if (snapshot.hasData) {
             if (snapshot.data.error != null && snapshot.data.error.length > 0) {
-              return BuildError.buildErrorWidget(snapshot.data.error);
+              return BuildError.buildErrorWidget(snapshot.data.error, retry: (){
+                showDialog(
+                    context: context,
+                    builder: (BuildContext context) {
+                      return Center(child: CircularProgressIndicator());
+                    });
+                moviesSearchBloc..getMoviesHome();
+                Future.delayed(Duration(seconds: 1), (){
+                  setState(() {
+                    Navigator.pop(context);
+                  });
+                });
+              });
             }
             List<Movie>  newSeason = snapshot.data.newSeason;
             List<Movie>  popular = snapshot.data.popular;
@@ -70,7 +82,19 @@ class _HomeScreenState extends State<HomeScreen> {
               ],
             );
           } else if (snapshot.hasError) {
-            return BuildError.buildErrorWidget(snapshot.error);
+            return BuildError.buildErrorWidget(snapshot.data.error, retry: (){
+              showDialog(
+                  context: context,
+                  builder: (BuildContext context) {
+                    return Center(child: CircularProgressIndicator());
+                  });
+              moviesSearchBloc..getMoviesHome();
+              Future.delayed(Duration(seconds: 1), (){
+                setState(() {
+                  Navigator.pop(context);
+                });
+              });
+            });
           } else {
             return Container(
                 height: double.infinity,

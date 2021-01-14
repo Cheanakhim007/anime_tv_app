@@ -116,11 +116,35 @@ class _MoviesScreenState extends State<MoviesScreen> {
           builder: (context, AsyncSnapshot<MovieResponse> snapshot) {
             if (snapshot.hasData) {
               if (snapshot.data.error != null && snapshot.data.error.length > 0 && snapshot.hasError && _countPage == 1) {
-                return BuildError.buildErrorWidget(snapshot.data.error);
+                return BuildError.buildErrorWidget(snapshot.data.error, retry: (){
+                  showDialog(
+                      context: context,
+                      builder: (BuildContext context) {
+                        return Center(child: CircularProgressIndicator());
+                      });
+                  getData();
+                  Future.delayed(Duration(seconds: 1), (){
+                    setState(() {
+                      Navigator.pop(context);
+                    });
+                  });
+                });
               }
               return _buildMoviesWidget(snapshot.data);
             } else if (snapshot.hasError && _countPage == 1) {
-              return BuildError.buildErrorWidget(snapshot.error);
+              return BuildError.buildErrorWidget(snapshot.data.error, retry: (){
+                showDialog(
+                    context: context,
+                    builder: (BuildContext context) {
+                      return Center(child: CircularProgressIndicator());
+                    });
+                getData();
+                Future.delayed(Duration(seconds: 1), (){
+                  setState(() {
+                    Navigator.pop(context);
+                  });
+                });
+              });
             } else {
               return Loading.buildLoadingWidget();
             }
@@ -154,23 +178,19 @@ class _MoviesScreenState extends State<MoviesScreen> {
     // remove duplicates movies
     _movies = [...{..._movies}];
     if (_movies.length == 0) {
-      return Container(
-        width: MediaQuery.of(context).size.width,
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: <Widget>[
-            Column(
-              children: <Widget>[
-                Text(
-                  "No More Movies",
-                  style: TextStyle(color: Colors.black45),
-                )
-              ],
-            )
-          ],
-        ),
-      );
+      return BuildError.buildErrorWidget("No Movie", retry: (){
+        showDialog(
+            context: context,
+            builder: (BuildContext context) {
+              return Center(child: CircularProgressIndicator());
+            });
+        getData();
+        Future.delayed(Duration(seconds: 1), (){
+          setState(() {
+            Navigator.pop(context);
+          });
+        });
+      });
     } else{
       final orientation = MediaQuery.of(context).orientation;
       return Column(
