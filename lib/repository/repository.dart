@@ -14,6 +14,7 @@ class MovieRepository {
   var getHomeUrl = '$mainUrl/home';
   var getDubUrl = '$mainUrl/dub';
   var getChineUrl = '$mainUrl/chinese';
+  var getDetailUrl = '$mainUrl/detail';
 
   Future<MovieResponse> getNewSeasonMovie() async {
     try {
@@ -130,6 +131,21 @@ class MovieRepository {
     } catch (error, stacktrace) {
       print("Exception occured: $error stackTrace: $stacktrace");
       return HomeResponse.withError("$error");
+    }
+  }
+
+  Future<MovieResponse> getMoviesDetail(String id) async {
+    try {
+      print("link  ${getDetailUrl}/$id");
+      Response response = await _dio.get(getDetailUrl+"/$id");
+      print("Result: ${response.data['code']}");
+      if(response.data['code'] == 200)
+        return MovieResponse.fromJson(response.data['result']['data'][0]);
+      else
+        return MovieResponse.withError("No movie");
+    } catch (error, stacktrace) {
+      print("Exception occured: $error stackTrace: $stacktrace");
+      return MovieResponse.withError("$error");
     }
   }
 

@@ -87,7 +87,7 @@ class _HeaderState extends State<Header> {
                 onTap: () {
                   Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (context) => MovieDetail()),
+                    MaterialPageRoute(builder: (context) => MovieDetail(movie: movies[index], label: "header")),
                   );
                 },
                 child: Stack(

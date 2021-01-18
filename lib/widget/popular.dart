@@ -1,6 +1,7 @@
 import 'package:anime_tv_app/bloc/get_popular_movies_bloc.dart';
 import 'package:anime_tv_app/model/movie.dart';
 import 'package:anime_tv_app/model/movie_repository.dart';
+import 'package:anime_tv_app/screen/movie_detail_screen.dart';
 import 'package:anime_tv_app/screen/movies.dart';
 import 'package:eva_icons_flutter/eva_icons_flutter.dart';
 import 'package:flutter/material.dart';
@@ -115,7 +116,10 @@ class _PopularMovieState extends State<PopularMovie> {
                   ),
                   child: GestureDetector(
                     onTap: () {
-
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => MovieDetail(movie: movies[index], label: widget.label)),
+                      );
                     },
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -137,17 +141,20 @@ class _PopularMovieState extends State<PopularMovie> {
                             ],
                           ),
                         ):
-                        Container(
-                            width: 120.0,
-                            height: 180.0,
-                            decoration: new BoxDecoration(
-                              borderRadius:
-                              BorderRadius.all(Radius.circular(2.0)),
-                              shape: BoxShape.rectangle,
-                              image: new DecorationImage(
-                                  fit: BoxFit.cover,
-                                  image: NetworkImage(movies[index].image)),
-                            )),
+                        Hero(
+                          tag: movies[index].id + widget.label,
+                          child: Container(
+                              width: 120.0,
+                              height: 180.0,
+                              decoration: new BoxDecoration(
+                                borderRadius:
+                                BorderRadius.all(Radius.circular(2.0)),
+                                shape: BoxShape.rectangle,
+                                image: new DecorationImage(
+                                    fit: BoxFit.cover,
+                                    image: NetworkImage(movies[index].image)),
+                              )),
+                        ),
                         SizedBox(
                           height: 10.0,
                         ),
