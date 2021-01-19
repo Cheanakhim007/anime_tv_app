@@ -1,6 +1,7 @@
 
 import 'package:anime_tv_app/model/home_repository.dart';
 import 'package:anime_tv_app/model/movie_repository.dart';
+import 'package:anime_tv_app/model/video_play.dart';
 import 'package:dio/dio.dart';
 
 class MovieRepository {
@@ -18,7 +19,7 @@ class MovieRepository {
 
   Future<MovieResponse> getNewSeasonMovie() async {
     try {
-      print("link  ${getNewseasonUrl}");
+      print("link  $getNewseasonUrl");
       Response response = await _dio.get(getNewseasonUrl);
     print("Result: ${response.statusCode}");
       return MovieResponse.fromJson(response.data);
@@ -124,7 +125,7 @@ class MovieRepository {
 
   Future<HomeResponse> getMoviesHomePage() async {
     try {
-      print("link  ${getHomeUrl}");
+      print("link  $getHomeUrl");
       Response response = await _dio.get(getHomeUrl);
       print("Result: ${response.statusCode}");
       return HomeResponse.fromJson(response.data['result']['data']);
@@ -136,7 +137,7 @@ class MovieRepository {
 
   Future<MovieResponse> getMoviesDetail(String id) async {
     try {
-      print("link  ${getDetailUrl}/$id");
+      print("link  $getDetailUrl/$id");
       Response response = await _dio.get(getDetailUrl+"/$id");
       print("Result: ${response.data['code']}");
       if(response.data['code'] == 200)
@@ -146,6 +147,22 @@ class MovieRepository {
     } catch (error, stacktrace) {
       print("Exception occured: $error stackTrace: $stacktrace");
       return MovieResponse.withError("$error");
+    }
+  }
+
+  Future<VideoPlay> getMoviesPlay(String id) async {
+    try {
+      print("link  $getDetailUrl/$id");
+      Response response = await _dio.get(getDetailUrl+"/$id");
+      print("Result: ${response.data['code']}");
+      if(response.data['code'] == 200)
+        return VideoPlay.fromJson(response.data['result']['data'][0][0]);
+      else
+         print("Exception occured: get movie play");
+        return null;
+    } catch (error, stacktrace) {
+      print("Exception occured: $error stackTrace: $stacktrace");
+      return null;
     }
   }
 

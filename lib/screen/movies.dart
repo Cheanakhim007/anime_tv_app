@@ -5,6 +5,7 @@ import 'package:anime_tv_app/bloc/get_popular_movies_bloc.dart';
 import 'package:anime_tv_app/bloc/get_rescent_movie_bloc.dart';
 import 'package:anime_tv_app/model/movie.dart';
 import 'package:anime_tv_app/model/movie_repository.dart';
+import 'package:anime_tv_app/screen/movie_detail_screen.dart';
 import 'package:anime_tv_app/screen/search_screen.dart';
 import 'package:anime_tv_app/widget/error_widget.dart';
 import 'package:anime_tv_app/widget/loading_widget.dart';
@@ -215,7 +216,10 @@ class _MoviesScreenState extends State<MoviesScreen> {
                   padding: EdgeInsets.all(10),
                   child: GestureDetector(
                     onTap: () {
-
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => MovieDetail(movie:  _movies[index], label: widget.status)),
+                      );
                     },
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -237,17 +241,19 @@ class _MoviesScreenState extends State<MoviesScreen> {
                             ],
                           ),
                         ):
-                        Container(
-                            width: 120.0,
-                            height: 170.0,
-                            decoration: new BoxDecoration(
-                              borderRadius:
-                              BorderRadius.all(Radius.circular(4.0)),
-                              shape: BoxShape.rectangle,
-                              image: new DecorationImage(
-                                  fit: BoxFit.cover,
-                                  image: NetworkImage(_movies[index].image)),
-                            )),
+                        Hero(
+                          tag: _movies[index].id + widget.status,
+                          child: Container(
+                              width: 120.0,
+                              height: 170.0,
+                              decoration: new BoxDecoration(
+                                borderRadius: BorderRadius.all(Radius.circular(4.0)),
+                                shape: BoxShape.rectangle,
+                                image: new DecorationImage(
+                                    fit: BoxFit.cover,
+                                    image: NetworkImage(_movies[index].image)),
+                              )),
+                        ),
                         SizedBox(
                           height: 10.0,
                         ),

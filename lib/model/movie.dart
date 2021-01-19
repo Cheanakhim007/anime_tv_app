@@ -3,7 +3,7 @@ class Movie {
   final String title;
   final String image;
   final String type;
-  final List episode;
+  final String episode;
   final List description;
 
   Movie(this.id,
@@ -19,7 +19,7 @@ class Movie {
         title = json["title"] ?? "",
         image = json["image"] ?? "",
         type = json["type"] ?? "",
-        episode = json["episode"] ?? [],
+        episode = json["episode"] ?? "",
         description = json["description"] ?? []
   ;
   @override

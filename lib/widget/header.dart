@@ -1,7 +1,6 @@
-import 'package:anime_tv_app/bloc/get_movies_new_season_bloc.dart';
+
 import 'package:anime_tv_app/model/movie.dart';
 import 'file:///C:/Users/Nakhim007/Desktop/App/anime_tv_app/lib/screen/movie_detail_screen.dart';
-import 'package:anime_tv_app/model/movie_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:anime_tv_app/style/theme.dart' as Style;
@@ -22,30 +21,11 @@ class _HeaderState extends State<Header> {
   @override
   void initState() {
     super.initState();
-    // moviesNewSeasonBloc..getMovies();
   }
 
   @override
   Widget build(BuildContext context) {
     return _buildHomeWidget(widget.movie);
- /*   return StreamBuilder<MovieResponse>(
-      stream: moviesNewSeasonBloc.subject.stream,
-      builder: (context, AsyncSnapshot<MovieResponse> snapshot) {
-        if (snapshot.hasData) {
-          if (snapshot.data.error != null && snapshot.data.error.length > 0) {
-            return BuildError.buildErrorWidget(snapshot.data.error);
-          }
-          return _buildHomeWidget(snapshot.data);
-        } else if (snapshot.hasError) {
-          return BuildError.buildErrorWidget(snapshot.error);
-        } else {
-          return Container(
-            height: 220,
-              child: Loading.buildLoadingWidget()
-          );
-        }
-      },
-    );*/
   }
 
   Widget _buildHomeWidget(List<Movie> movies) {
@@ -93,7 +73,7 @@ class _HeaderState extends State<Header> {
                 child: Stack(
                   children: <Widget>[
                     Hero(
-                      tag: movies[index].id,
+                      tag: movies[index].id + "header",
                       child: Container(
                           width: MediaQuery.of(context).size.width,
                           height: 220.0,

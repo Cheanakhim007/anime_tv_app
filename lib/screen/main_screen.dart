@@ -107,9 +107,11 @@ class _MainScreenState extends State<MainScreen> {
               onTap: _bottomNavBarBloc.pickItem,
               items: [
                 BottomNavigationBarItem(
+                  // ignore: deprecated_member_use
                   title: Padding(padding: EdgeInsets.only(top: 5.0)),
                   icon: Icon(Icons.home,size: 28,)),
                 BottomNavigationBarItem(
+                  // ignore: deprecated_member_use
                   title: Padding(padding: EdgeInsets.only(top: 5.0)),
                   icon: Icon(Icons.local_movies, size: 28,)),
                 BottomNavigationBarItem(

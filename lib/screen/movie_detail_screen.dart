@@ -1,6 +1,9 @@
 import 'package:anime_tv_app/bloc/get_detail_movie_bloc.dart';
 import 'package:anime_tv_app/model/movie.dart';
 import 'package:anime_tv_app/model/movie_repository.dart';
+import 'package:anime_tv_app/model/video_play.dart';
+import 'package:anime_tv_app/model/video_play_screen.dart';
+import 'package:anime_tv_app/repository/repository.dart';
 import 'package:anime_tv_app/widget/error_widget.dart';
 import 'package:anime_tv_app/widget/loading_widget.dart';
 import 'package:flutter/material.dart';
@@ -18,16 +21,15 @@ class MovieDetail extends StatefulWidget {
 }
 
 class _MovieDetailState extends State<MovieDetail> {
-  _MovieDetailState(this.movie);
-  final Movie movie;
+  _MovieDetailState(this._movie);
+  final Movie _movie;
   String firstHalf;
   String secondHalf;
-
   bool flag = true;
 
   @override
   void initState() {
-    moviesDetailBloc..getMoviesDetail(id: movie.id);
+    moviesDetailBloc..getMoviesDetail(id: _movie.id);
     super.initState();
   }
   @override
@@ -47,7 +49,7 @@ class _MovieDetailState extends State<MovieDetail> {
                     pinned: true,
                     flexibleSpace: new FlexibleSpaceBar(
                         title: Text(
-                          movie.title,
+                          _movie.title,
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                           textAlign: TextAlign.right,
@@ -57,13 +59,13 @@ class _MovieDetailState extends State<MovieDetail> {
                         background: Stack(
                           children: <Widget>[
                             Hero(
-                            tag : movie.id + widget.label,
+                            tag : _movie.id + widget.label,
                               child: Container(
                                 decoration: new BoxDecoration(
                                   shape: BoxShape.rectangle,
                                   image: new DecorationImage(
                                       fit: BoxFit.cover,
-                                      image: NetworkImage(movie.image)),
+                                      image: NetworkImage(_movie.image)),
                                 ),
                                 child: new Container(
                                   decoration: new BoxDecoration(
@@ -71,7 +73,7 @@ class _MovieDetailState extends State<MovieDetail> {
                                 ),
                               ),
                             ),
-                            Container(
+                 /*           Container(
                               decoration: BoxDecoration(
                                 gradient: LinearGradient(
                                     begin: Alignment.bottomCenter,
@@ -85,12 +87,12 @@ class _MovieDetailState extends State<MovieDetail> {
                                       Colors.black.withOpacity(0.0)
                                     ]),
                               ),
-                            ),
+                            ),*/
                           ],
                         )),
                   ),
                     SliverPadding(
-                        padding: EdgeInsets.all(0.0),
+                        padding: EdgeInsets.symmetric(vertical: 10),
                         sliver: SliverList(
                             delegate: SliverChildListDelegate([
                               StreamBuilder<MovieResponse>(
@@ -145,14 +147,19 @@ class _MovieDetailState extends State<MovieDetail> {
   Widget buildSliverBody(MovieResponse data) {
     Movie movie = data.movies[0];
     String des = movie.description[1]['value'] ?? "";
-    if (des.length > 50) {
-      firstHalf = des.substring(0, 50);
-      secondHalf = des.substring(50, des.length);
+    if (des.length > 100) {
+      firstHalf = des.substring(0, 100);
+      secondHalf = des.substring(100, des.length);
     } else {
       firstHalf = des;
       secondHalf = "";
     }
-    List<String> episode = movie.episode.last.toString().split("-");
+    List<int> episode = [];
+    if(movie.episode.isNotEmpty){
+      int size = int.parse(movie.episode);
+      episode = new List<int>.generate(size, (i) => i + 1);
+      episode.sort((a,b) => b.compareTo(a));
+    }
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -186,7 +193,6 @@ class _MovieDetailState extends State<MovieDetail> {
               children: [
                 new Text(flag ? (firstHalf + "...") : (firstHalf + secondHalf),
                     style: new TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 15, height: 1.5)),
-                SizedBox(height: 6),
                 new Row(
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: <Widget>[
@@ -196,9 +202,12 @@ class _MovieDetailState extends State<MovieDetail> {
                           flag = !flag;
                         });
                       },
-                      child: new Text(
-                        flag ? "show more" : "show less",
-                        style: new TextStyle(color: Colors.blue),
+                      child: Container(
+                       padding: EdgeInsets.all(6),
+                        child: new Text(
+                          flag ? "show more" : "show less",
+                          style: new TextStyle(color: Colors.blue),
+                        ),
                       ),
                     ),
                   ],
@@ -208,40 +217,67 @@ class _MovieDetailState extends State<MovieDetail> {
           ),
         ),
         Container(
-          margin: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-          child: SingleChildScrollView(
-            scrollDirection: Axis.horizontal,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: [
-              Text(
-              "Episodes",
-              style: TextStyle(fontSize: 12.0, fontWeight: FontWeight.bold, color: Colors.white)),
-             SizedBox(height: 8),
-              Row(
-                children: episode.map((e){
-                  return Container(
-                    margin: EdgeInsets.only(left: episode.indexOf(e) == 0 ? 0 : 8),
-                    decoration: BoxDecoration(
-                      border: Border.all(
-                          color: Style.Colors.secondColor, //                   <--- border color
-                          width: 2.0
-                      ),
-                      borderRadius: BorderRadius.all(
-                          Radius.circular(8) //                 <--- border radius here
-                      ),
-                    ),
-                    child: Container(
-                        width: 50,
-                        height: 35,
-                        alignment: Alignment.center,
-                        child: new Text(e, style: new TextStyle(color: Colors.white, fontWeight: FontWeight.bold),)),
-                  );
-                }).toList(),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: [
+              Container(
+                margin: EdgeInsets.only(left:  8),
+                child: Text(
+                    "Episodes",
+                    style: TextStyle(fontSize: 14.0, fontWeight: FontWeight.bold, color: Colors.white)),
               ),
-              ],
-            ),
+              SizedBox(height: 8),
+              SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                  Row(
+                    children: episode.map((e){
+                      return GestureDetector(
+                        onTap: () async {
+                          final MovieRepository repository = MovieRepository();
+                          VideoPlay response = await repository.getMoviesPlay(_movie.id + "-episode-" + e.toString());
+                          print("======> Data ${response.source[0]['file']}");
+                          String url = response.source[0]['file'];
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (context) => VideoPlayScreen(url: url)),
+                          );
+                        },
+                        child: Container(
+                          margin: EdgeInsets.only(left:  8),
+                          decoration: BoxDecoration(
+                            border: Border.all(
+                                color: Style.Colors.secondColor, //                   <--- border color
+                                width: 2.0
+                            ),
+                            borderRadius: BorderRadius.all(
+                                Radius.circular(8) //                 <--- border radius here
+                            ),
+                          ),
+                          child: Container(
+                              width: 90,
+                              height: 50,
+                              alignment: Alignment.center,
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  new Text(e.toString(), style: new TextStyle(color: Colors.white, fontWeight: FontWeight.bold),),
+                                  new Text("Raw", style: new TextStyle(color: Colors.white, fontWeight: FontWeight.bold),),
+                                ],
+                              )),
+                        ),
+                      );
+                    }).toList(),
+                  ),
+                  ],
+                ),
+              ),
+            ],
           ),
         )
       ],
