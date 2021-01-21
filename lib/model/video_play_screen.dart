@@ -69,8 +69,8 @@ class _VideoPlayScreenState extends State<VideoPlayScreen> {
         player: player,
         width: double.infinity,
         height: double.infinity,
-        fit: FijkFit.cover,
-        fsFit : FijkFit.cover,
+        fit: FijkFit.contain,
+        fsFit : FijkFit.contain,
         color: Colors.black,
         onDispose: (value){
           player.dispose();
