@@ -2,7 +2,7 @@ import 'package:anime_tv_app/bloc/get_detail_movie_bloc.dart';
 import 'package:anime_tv_app/model/movie.dart';
 import 'package:anime_tv_app/model/movie_repository.dart';
 import 'package:anime_tv_app/model/video_play.dart';
-import 'package:anime_tv_app/model/video_play_screen.dart';
+import 'file:///C:/Users/Nakhim007/Desktop/App/anime_tv_app/lib/screen/video_play_screen.dart';
 import 'package:anime_tv_app/repository/repository.dart';
 import 'package:anime_tv_app/widget/error_widget.dart';
 import 'package:anime_tv_app/widget/loading_widget.dart';
@@ -36,9 +36,9 @@ class _MovieDetailState extends State<MovieDetail> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Style.Colors.mainColor,
-      body: new Builder(
+      body: Builder(
           builder: (context){
-            return new SliverFab(
+            return  SliverFab(
                 floatingPosition: FloatingPosition(right: 20),
                 floatingWidget: Container(),
                 expandedHeight: 300,
@@ -47,7 +47,7 @@ class _MovieDetailState extends State<MovieDetail> {
                     backgroundColor: Style.Colors.mainColor,
                     expandedHeight: 300.0,
                     pinned: true,
-                    flexibleSpace: new FlexibleSpaceBar(
+                    flexibleSpace:  FlexibleSpaceBar(
                         title: Text(
                           _movie.title,
                           maxLines: 1,
@@ -61,14 +61,14 @@ class _MovieDetailState extends State<MovieDetail> {
                             Hero(
                             tag : _movie.id + widget.label,
                               child: Container(
-                                decoration: new BoxDecoration(
+                                decoration:  BoxDecoration(
                                   shape: BoxShape.rectangle,
-                                  image: new DecorationImage(
+                                  image:  DecorationImage(
                                       fit: BoxFit.cover,
                                       image: NetworkImage(_movie.image)),
                                 ),
-                                child: new Container(
-                                  decoration: new BoxDecoration(
+                                child:  Container(
+                                  decoration:  BoxDecoration(
                                       color: Colors.black.withOpacity(0.5)),
                                 ),
                               ),
@@ -130,7 +130,10 @@ class _MovieDetailState extends State<MovieDetail> {
                                       });
                                     });
                                   } else {
-                                    return Loading.buildLoadingWidget();
+                                    return Container(
+                                         height: double.infinity,
+                                        child: Loading.buildLoadingWidget()
+                                    );
                                   }
                                 },
                               )
@@ -147,6 +150,7 @@ class _MovieDetailState extends State<MovieDetail> {
   Widget buildSliverBody(MovieResponse data) {
     Movie movie = data.movies[0];
     String des = movie.description[1]['value'] ?? "";
+
     if (des.length > 100) {
       firstHalf = des.substring(0, 100);
       secondHalf = des.substring(100, des.length);
@@ -191,9 +195,9 @@ class _MovieDetailState extends State<MovieDetail> {
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
-                new Text(flag ? (firstHalf + "...") : (firstHalf + secondHalf),
+                 Text(flag ? (firstHalf) : (firstHalf + secondHalf),
                     style: new TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 15, height: 1.5)),
-                new Row(
+                 Row(
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: <Widget>[
                     InkWell(
@@ -203,10 +207,10 @@ class _MovieDetailState extends State<MovieDetail> {
                         });
                       },
                       child: Container(
-                       padding: EdgeInsets.all(6),
-                        child: new Text(
+                       padding: EdgeInsets.all(4),
+                        child:  Text(
                           flag ? "show more" : "show less",
-                          style: new TextStyle(color: Colors.blue),
+                          style:  TextStyle(color: Colors.blue),
                         ),
                       ),
                     ),
@@ -266,8 +270,8 @@ class _MovieDetailState extends State<MovieDetail> {
                                 crossAxisAlignment: CrossAxisAlignment.center,
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
-                                  new Text(e.toString(), style: new TextStyle(color: Colors.white, fontWeight: FontWeight.bold),),
-                                  new Text("Raw", style: new TextStyle(color: Colors.white, fontWeight: FontWeight.bold),),
+                                   Text(e.toString(), style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),),
+                                   Text("Raw", style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),),
                                 ],
                               )),
                         ),
@@ -281,16 +285,6 @@ class _MovieDetailState extends State<MovieDetail> {
           ),
         )
       ],
-    );
-  }
-
-  Widget _buildVideoWidget() {
-    return FloatingActionButton(
-      backgroundColor: Style.Colors.secondColor,
-      onPressed: () {
-
-      },
-      child: Icon(Icons.play_arrow),
     );
   }
 }
