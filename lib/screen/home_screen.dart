@@ -75,9 +75,9 @@ class _HomeScreenState extends State<HomeScreen> {
               children: <Widget>[
                 Header(newSeason),
                 PopularMovie( movie: popular, label: "POPULAR",),
+                PopularMovie(movie: chinese, label :"CHINESE"),
                 PopularMovie(movie: recent , label :"RECENT"),
                 PopularMovie(movie: dub , label :"DUB"),
-                PopularMovie(movie: chinese, label :"CHINESE"),
                 // RecentMovie(),
               ],
             );

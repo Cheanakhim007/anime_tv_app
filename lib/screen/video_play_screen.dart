@@ -24,17 +24,19 @@ class _VideoPlayScreenState extends State<VideoPlayScreen> {
     );
     _betterPlayerController = BetterPlayerController(
         BetterPlayerConfiguration(
-          aspectRatio: 16 / 9,
-          autoPlay: true,
-          looping: true,
-          allowedScreenSleep: false,
-          autoDetectFullscreenDeviceOrientation : true,
-          controlsConfiguration: BetterPlayerControlsConfiguration(
-           enableProgressBar: true,
-           enableProgressText: true,
-           enablePlayPause : true,
-           showControls : true,
-           enableQualities : true,
+            aspectRatio: 16 / 9,
+            autoPlay: true,
+            looping: true,
+            allowedScreenSleep: false,
+            fullScreenAspectRatio: 16 / 9,
+            fullScreenByDefault: true,
+            autoDetectFullscreenDeviceOrientation : true,
+            controlsConfiguration: BetterPlayerControlsConfiguration(
+            enableProgressBar: true,
+            enableProgressText: true,
+            enablePlayPause : true,
+            showControls : true,
+            enableQualities : true,
           )
         ),
         betterPlayerDataSource: betterPlayerDataSource);

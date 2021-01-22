@@ -61,7 +61,10 @@ class _SearchScreenState extends State<SearchScreen> {
     final MovieRepository _repository = MovieRepository();
     MovieResponse response = await _repository.getSearch(text, countPage: _countPage);
     // remove duplicates movies
-    return [...{...response.movies}];
+    _movies = [...{...response.movies}];
+    print("====>1 ${_movies.length}");
+    print("====>2 ${_movies}");
+    return _movies;
   }
 
   @override
@@ -201,12 +204,12 @@ class _SearchScreenState extends State<SearchScreen> {
                           width: 100,
                           child: Text(
                             movie.title,
-                            maxLines: 1,
+                            maxLines: 2,
                             textAlign: TextAlign.center,
                             style: TextStyle(
                                 color: Colors.white,
                                 fontWeight: FontWeight.bold,
-                                fontSize: 12.0),
+                                fontSize: 10.0),
                           ),
                         ),
                       ],

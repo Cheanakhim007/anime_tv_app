@@ -131,7 +131,8 @@ class _MovieDetailState extends State<MovieDetail> {
                                     });
                                   } else {
                                     return Container(
-                                         height: double.infinity,
+                                         height: 300,
+                                         alignment: Alignment.center,
                                         child: Loading.buildLoadingWidget()
                                     );
                                   }
@@ -190,32 +191,35 @@ class _MovieDetailState extends State<MovieDetail> {
         Visibility(
           visible: des.isNotEmpty,
           child: Container(
-            margin: EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+            margin: EdgeInsets.symmetric(horizontal: 8, vertical: 6),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
                  Text(flag ? (firstHalf) : (firstHalf + secondHalf),
                     style: new TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 15, height: 1.5)),
-                 Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: <Widget>[
-                    InkWell(
-                      onTap: () {
-                        setState(() {
-                          flag = !flag;
-                        });
-                      },
-                      child: Container(
-                       padding: EdgeInsets.all(4),
-                        child:  Text(
-                          flag ? "show more" : "show less",
-                          style:  TextStyle(color: Colors.blue),
+                 Visibility(
+                   visible: firstHalf.length > 50,
+                   child: Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: <Widget>[
+                      InkWell(
+                        onTap: () {
+                          setState(() {
+                            flag = !flag;
+                          });
+                        },
+                        child: Container(
+                         padding: EdgeInsets.all(4),
+                          child:  Text(
+                            flag ? "show more" : "show less",
+                            style:  TextStyle(color: Colors.blue),
+                          ),
                         ),
                       ),
-                    ),
-                  ],
+                    ],
                 ),
+                 ),
               ],
             ),
           ),
@@ -281,6 +285,7 @@ class _MovieDetailState extends State<MovieDetail> {
                   ],
                 ),
               ),
+              SizedBox(height: 8),
             ],
           ),
         )
