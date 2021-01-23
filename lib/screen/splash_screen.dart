@@ -13,7 +13,7 @@ class _SplashScreenAppState extends State<SplashScreenApp> {
   @override
   Widget build(BuildContext context) {
     return new SplashScreen(
-      seconds: 2,
+      seconds: 1,
       navigateAfterSeconds: new MainScreen(),
       title: new Text(
         'ANIME TV',

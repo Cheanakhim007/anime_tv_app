@@ -11,7 +11,7 @@ class HomeResponse {
   HomeResponse(this.dub, this.chinese, this.popular, this.recent, this.newSeason, this.error);
 
   HomeResponse.fromJson(Map json)
-      : newSeason = (json['newSeason'] as List).map((i) => new Movie.fromJson(i)).toList(),
+      : newSeason = (json['onGoing'] as List).map((i) => new Movie.fromJson(i)).toList(),
         popular = (json['popular'] as List).map((i) => new Movie.fromJson(i)).toList(),
         recent = (json['recent'] as List ).map((i) => new Movie.fromJson(i)).toList(),
         dub = (json['dub'] as List).map((i) => new Movie.fromJson(i)).toList(),

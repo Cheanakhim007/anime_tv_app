@@ -1,9 +1,15 @@
 import 'dart:async';
+import 'dart:io';
 import 'package:anime_tv_app/bloc/botton_navbar_bloc.dart';
+import 'package:anime_tv_app/model/app_config.dart';
 import 'package:anime_tv_app/screen/movies.dart';
 import 'package:data_connection_checker/data_connection_checker.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_remote_config/firebase_remote_config.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:anime_tv_app/style/theme.dart' as Style;
+import 'package:url_launcher/url_launcher.dart';
 
 import 'home_screen.dart';
 
@@ -20,6 +26,7 @@ class _MainScreenState extends State<MainScreen> {
   @override
   void initState() {
     super.initState();
+    versionCheck(context);
     _bottomNavBarBloc = BottomNavBarBloc();
     checkConnection(context);
   }
@@ -136,5 +143,80 @@ class _MainScreenState extends State<MainScreen> {
         ],
       ),
     );
+  }
+
+  versionCheck(context) async {
+    await Firebase.initializeApp();
+    try {
+      final RemoteConfig remoteConfig = await RemoteConfig.instance;
+      // Allow a fetch every millisecond. Default is 12 hours.
+      remoteConfig.setConfigSettings(RemoteConfigSettings(minimumFetchIntervalMillis: 1));
+      await remoteConfig.fetch(expiration: const Duration(seconds: 0));
+      await remoteConfig.activateFetched();
+
+
+      String appUrl = remoteConfig.getString('appUrl');
+      int currentVersion = int.parse(remoteConfig.getString('currentVersion'));
+      int minVersion = int.parse(remoteConfig.getString('minVersion'));
+      int maxVersion = int.parse(remoteConfig.getString('maxVersion'));
+      String updateTitle = remoteConfig.getString('updateTitle');
+      String updateMessage = remoteConfig.getString('updateMessage');
+
+      print("-----> ${AppConfigUtils.appConfig}");
+      print("-----> ${appUrl}");
+      print("-----> ${currentVersion}");
+      print("-----> ${updateTitle}");
+      print("-----> ${updateMessage}");
+
+      if( currentVersion >  AppConfigUtils.appConfig.softwareVersion){
+        return  _showVersionDialog(
+          context: context,
+          url: appUrl,
+          title: updateTitle,
+          message: updateMessage
+        );
+      }
+    }on FetchThrottledException catch (exception) {
+      print( "Error --->   $exception");
+    } catch (exception) {
+      print('Unable to fetch remote config. Cached or default values will beused');
+    }
+
+  }
+
+  _showVersionDialog({BuildContext context, String url , String title, String message}) async {
+    await showDialog<String>(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        String btnLabel = "Update Now";
+        String btnLabelCancel = "Later";
+        return WillPopScope(
+          onWillPop: () async => false,
+          child: CupertinoAlertDialog(
+            title: Text(title),
+            content: Text(message),
+            actions: <Widget>[
+              FlatButton(
+                child: Text(btnLabel),
+                onPressed: () => _launchURL(url),
+              ),
+             /* FlatButton(
+                child: Text(btnLabelCancel),
+                onPressed: () => Navigator.pop(context),
+              ),*/
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  _launchURL(String url) async {
+    if (await canLaunch(url)) {
+      await launch(url);
+    } else {
+      throw 'Could not launch $url';
+    }
   }
 }
