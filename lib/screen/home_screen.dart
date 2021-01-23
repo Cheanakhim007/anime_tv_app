@@ -67,6 +67,7 @@ class _HomeScreenState extends State<HomeScreen> {
               });
             }
             List<Movie>  newSeason = snapshot.data.newSeason;
+            newSeason.shuffle();
             List<Movie>  popular = snapshot.data.popular;
             List<Movie>  recent = snapshot.data.recent;
             List<Movie>  dub = snapshot.data.dub;

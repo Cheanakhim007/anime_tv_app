@@ -248,12 +248,13 @@ class _MovieDetailState extends State<MovieDetail> {
                         onTap: () async {
                           final MovieRepository repository = MovieRepository();
                           VideoPlay response = await repository.getMoviesPlay(_movie.id + "-episode-" + e.toString());
-                          print("======> Data ${response.source[0]['file']}");
-                          String url = response.source[0]['file'];
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(builder: (context) => VideoPlayScreen(url: url)),
-                          );
+                              if(response != null && response.source.isNotEmpty){
+                                String url = response.source[0];
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(builder: (context) => VideoPlayScreen(url: url)),
+                                );
+                              }
                         },
                         child: Container(
                           margin: EdgeInsets.only(left:  8),

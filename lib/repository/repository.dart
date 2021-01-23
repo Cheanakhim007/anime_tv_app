@@ -141,7 +141,7 @@ class MovieRepository {
       Response response = await _dio.get(getDetailUrl+"/$id");
       print("Result: ${response.data['code']}");
       if(response.data['code'] == 200)
-        return MovieResponse.fromJson(response.data['result']['data'][0]);
+        return MovieResponse.fromJson([response.data['result']['data']]);
       else
         return MovieResponse.withError("No movie");
     } catch (error, stacktrace) {
@@ -156,7 +156,7 @@ class MovieRepository {
       Response response = await _dio.get(getDetailUrl+"/$id");
       print("Result: ${response.data['code']}");
       if(response.data['code'] == 200)
-        return VideoPlay.fromJson(response.data['result']['data'][0][0]);
+        return VideoPlay.fromJson(response.data['result']);
       else
          print("Exception occured: get movie play");
         return null;

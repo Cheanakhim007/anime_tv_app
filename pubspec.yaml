@@ -42,8 +42,8 @@ dependencies:
   data_connection_checker: 0.3.4
   better_player: 0.0.47
   fijkplayer: 0.8.7
-  chewie: 0.12.2
-  video_player: 1.0.1
+  firebase_remote_config: 0.6.0
+  firebase_core: 0.7.0
 
 
 dev_dependencies:
