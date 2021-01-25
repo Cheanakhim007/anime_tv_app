@@ -26,6 +26,7 @@ class _MovieDetailState extends State<MovieDetail> {
   String firstHalf;
   String secondHalf;
   bool flag = true;
+  Map<String, bool> currentPaly = new Map();
 
   @override
   void initState() {
@@ -139,7 +140,6 @@ class _MovieDetailState extends State<MovieDetail> {
                                 },
                               )
                         ]))),
-
                 ],
 
             );
@@ -246,21 +246,33 @@ class _MovieDetailState extends State<MovieDetail> {
                     children: episode.map((e){
                       return GestureDetector(
                         onTap: () async {
+                          showDialog(
+                              context: context,
+                              builder: (BuildContext context) {
+                                return Center(child: CircularProgressIndicator(
+                                  valueColor: AlwaysStoppedAnimation<Color>(Style.Colors.secondColor),
+                                  strokeWidth: 4.0,
+                                ),);
+                              });
+                          currentPaly = new Map();
+                          currentPaly[e.toString()] = true;
                           final MovieRepository repository = MovieRepository();
                           VideoPlay response = await repository.getMoviesPlay(_movie.id + "-episode-" + e.toString());
-                              if(response != null && response.source.isNotEmpty){
+                          Navigator.pop(context);
+                          if(response != null && response.source.isNotEmpty){
                                 String url = response.source[0];
                                 Navigator.push(
                                   context,
                                   MaterialPageRoute(builder: (context) => VideoPlayScreen(url: url)),
                                 );
                               }
+                          setState(() {});
                         },
                         child: Container(
                           margin: EdgeInsets.only(left:  8),
                           decoration: BoxDecoration(
                             border: Border.all(
-                                color: Style.Colors.secondColor, //                   <--- border color
+                                color: currentPaly[e.toString()] ?? false ? Style.Colors.secondColor : Colors.grey, //                   <--- border color
                                 width: 2.0
                             ),
                             borderRadius: BorderRadius.all(
@@ -276,7 +288,7 @@ class _MovieDetailState extends State<MovieDetail> {
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
                                    Text(e.toString(), style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),),
-                                   Text("Raw", style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),),
+                                   Text("EP", style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),),
                                 ],
                               )),
                         ),

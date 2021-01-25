@@ -12,8 +12,7 @@ class Loading {
               height: 25.0,
               width: 25.0,
               child: CircularProgressIndicator(
-                valueColor:
-                new AlwaysStoppedAnimation<Color>(Style.Colors.secondColor),
+                valueColor: AlwaysStoppedAnimation<Color>(Style.Colors.secondColor),
                 strokeWidth: 4.0,
               ),
             )

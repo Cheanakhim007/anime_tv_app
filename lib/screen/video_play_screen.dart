@@ -17,41 +17,48 @@ class _VideoPlayScreenState extends State<VideoPlayScreen> {
   @override
   void initState() {
     super.initState();
-    _player.setDataSource(widget.url, autoPlay: true, showCover: true);
-    BetterPlayerDataSource betterPlayerDataSource = BetterPlayerDataSource(
-      BetterPlayerDataSourceType.network,
-      "${widget.url}",
-    );
-    _betterPlayerController = BetterPlayerController(
-        BetterPlayerConfiguration(
-            aspectRatio: 16 / 9,
-            autoPlay: true,
-            looping: true,
-            allowedScreenSleep: false,
-            fullScreenAspectRatio: 16 / 9,
-            fullScreenByDefault: true,
-            autoDetectFullscreenDeviceOrientation : true,
-            controlsConfiguration: BetterPlayerControlsConfiguration(
-            enableProgressBar: true,
-            enableProgressText: true,
-            enablePlayPause : true,
-            showControls : true,
-            enableQualities : true,
-          )
-        ),
-        betterPlayerDataSource: betterPlayerDataSource);
+    if(idM3U8()) {
+      _player.setDataSource(widget.url, autoPlay: true, showCover: true);
+    }else {
+      BetterPlayerDataSource betterPlayerDataSource = BetterPlayerDataSource(
+        BetterPlayerDataSourceType.network,
+        "${widget.url}",
+      );
+      _betterPlayerController = BetterPlayerController(
+          BetterPlayerConfiguration(
+              aspectRatio: 16 / 9,
+              autoPlay: true,
+              looping: true,
+              autoDispose: true,
+              allowedScreenSleep: false,
+              fullScreenAspectRatio: 16 / 9,
+              fullScreenByDefault: true,
+              autoDetectFullscreenDeviceOrientation: true,
+              controlsConfiguration: BetterPlayerControlsConfiguration(
+                enableProgressBar: true,
+                enableProgressText: true,
+                enablePlayPause: true,
+                showControls: true,
+                enableQualities: true,
+              )
+          ),
+          betterPlayerDataSource: betterPlayerDataSource);
+    }
   }
 
   @override
   void dispose() {
-    _player.dispose();
-    _player.release();
-    _betterPlayerController.dispose();
+    if(idM3U8()){
+      _player.release();
+      _player.dispose();
+    }else{
+    _betterPlayerController.dispose(forceDispose: true);
+    }
     super.dispose();
   }
   @override
   Widget build(BuildContext context) {
-    if(widget.url.contains(".m3u8")){
+    if(idM3U8()){
       return Container(
         alignment: Alignment.center,
         child: FijkView(
@@ -62,8 +69,8 @@ class _VideoPlayScreenState extends State<VideoPlayScreen> {
           fsFit : FijkFit.ar16_9,
           color: Colors.black,
           onDispose: (value){
-            _player.dispose();
-            _player.release();
+            _player?.dispose();
+            _player?.release();
           },
         ),
       );
@@ -76,4 +83,6 @@ class _VideoPlayScreenState extends State<VideoPlayScreen> {
       );
     }
   }
+
+  bool idM3U8() => widget.url.contains(".m3u8");
 }
