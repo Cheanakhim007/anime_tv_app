@@ -174,6 +174,8 @@ class _MoviesScreenState extends State<MoviesScreen> {
   }
 
   Widget _buildMoviesWidget(MovieResponse data) {
+    if(data.movies.length == 0)
+        _stopRequest = true;
     if(_movies.toString() != data.movies.toString())
           _movies.addAll(data.movies);
     // remove duplicates movies
@@ -208,10 +210,10 @@ class _MoviesScreenState extends State<MoviesScreen> {
                   : MediaQuery.of(context).size.width / (MediaQuery.of(context).size.height / 0.4)),
               itemBuilder: (context, index) {
                 if(index == _movies.length)
-                  return Padding(
+                  return _isLoading ? Padding(
                     padding: const EdgeInsets.all(6),
                     child: Loading.buildLoadingWidget(),
-                  );
+                  ) : Container();
                 return Padding(
                   padding: EdgeInsets.all(10),
                   child: GestureDetector(
