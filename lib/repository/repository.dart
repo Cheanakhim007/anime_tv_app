@@ -1,4 +1,5 @@
 
+import 'package:anime_tv_app/model/genre_response.dart';
 import 'package:anime_tv_app/model/home_repository.dart';
 import 'package:anime_tv_app/model/movie_repository.dart';
 import 'package:anime_tv_app/model/video_play.dart';
@@ -16,6 +17,8 @@ class MovieRepository {
   var getDubUrl = '$mainUrl/dub';
   var getChineUrl = '$mainUrl/chinese';
   var getDetailUrl = '$mainUrl/detail';
+  var getGenresUrl = '$mainUrl/genres/action';
+  var getGenresMovieUrl = '$mainUrl/genres';
 
   Future<MovieResponse> getNewSeasonMovie() async {
     try {
@@ -163,6 +166,29 @@ class MovieRepository {
     } catch (error, stacktrace) {
       print("Exception occured: $error stackTrace: $stacktrace");
       return null;
+    }
+  }
+
+  Future<GenreResponse> getGenres() async {
+    try {
+      Response response = await _dio.get(getGenresUrl);
+      return GenreResponse.fromJson(response.data['result']['data']);
+    } catch (error, stacktrace) {
+      print("Exception occured: $error stackTrace: $stacktrace");
+      return GenreResponse.withError("$error");
+    }
+  }
+
+
+  Future<MovieResponse> getMovieByGenre(String id, {int countPage = 1}) async {
+    try {
+      print("link  ${getGenresMovieUrl + "/$id" + "?page=${countPage.toString()}"}");
+      Response response = await _dio.get(getGenresMovieUrl + "/$id}" + "?page=${countPage.toString()}");
+      Map data = Map.from(response.data['result']['data']);
+      return MovieResponse.fromJson(response.data['result']['data']['genTypeList']);
+    } catch (error, stacktrace) {
+      print("Exception occured: $error stackTrace: $stacktrace");
+      return MovieResponse.withError("$error");
     }
   }
 

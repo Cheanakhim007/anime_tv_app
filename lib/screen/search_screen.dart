@@ -35,6 +35,12 @@ class _SearchScreenState extends State<SearchScreen> {
     super.initState();
   }
 
+  @override
+  void dispose() {
+   _scrollController.dispose();
+    super.dispose();
+  }
+
   void _scrollListener() async {
     double maxScroll = _scrollController.position.maxScrollExtent;
     double currentScroll = _scrollController.position.pixels;

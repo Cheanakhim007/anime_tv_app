@@ -1,8 +1,8 @@
 import 'dart:async';
-import 'dart:io';
 import 'package:anime_tv_app/bloc/botton_navbar_bloc.dart';
 import 'package:anime_tv_app/model/app_config.dart';
 import 'package:anime_tv_app/screen/movies.dart';
+import 'package:anime_tv_app/screen/genres_screen.dart';
 import 'package:data_connection_checker/data_connection_checker.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_remote_config/firebase_remote_config.dart';
@@ -88,7 +88,7 @@ class _MainScreenState extends State<MainScreen> {
               case NavBarItem.MOVIE:
                 return MoviesScreen(status: "movies");
               case NavBarItem.NEW:
-                return testScreen();
+                return GenresScreen();
             }
           },
         ),
@@ -131,20 +131,6 @@ class _MainScreenState extends State<MainScreen> {
       ),
     );
   }
-  Widget testScreen() {
-    return Container(
-      color: Colors.white,
-      width: MediaQuery.of(context).size.width,
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: <Widget>[
-          Text("New Screen")
-        ],
-      ),
-    );
-  }
-
   versionCheck(context) async {
     await Firebase.initializeApp();
     try {

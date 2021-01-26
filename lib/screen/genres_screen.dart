@@ -1,32 +1,30 @@
-import 'package:anime_tv_app/bloc/get_chinese_movie_bloc.dart';
-import 'package:anime_tv_app/bloc/get_dub_movie_bloc.dart';
-import 'package:anime_tv_app/bloc/get_movies_bloc.dart';
-import 'package:anime_tv_app/bloc/get_popular_movies_bloc.dart';
-import 'package:anime_tv_app/bloc/get_rescent_movie_bloc.dart';
+
+import 'package:anime_tv_app/bloc/get_genres_bloc.dart';
+import 'package:anime_tv_app/bloc/get_movies_byGenre_bloc.dart';
+import 'package:anime_tv_app/model/genre.dart';
+import 'package:anime_tv_app/model/genre_response.dart';
 import 'package:anime_tv_app/model/movie.dart';
 import 'package:anime_tv_app/model/movie_repository.dart';
 import 'package:anime_tv_app/screen/movie_detail_screen.dart';
+import 'package:anime_tv_app/screen/movies_by_genre.dart';
 import 'package:anime_tv_app/screen/search_screen.dart';
 import 'package:anime_tv_app/widget/error_widget.dart';
 import 'package:anime_tv_app/widget/loading_widget.dart';
 import 'package:eva_icons_flutter/eva_icons_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:anime_tv_app/style/theme.dart' as Style;
-import 'package:rxdart/src/streams/value_stream.dart';
 
-class MoviesScreen extends StatefulWidget {
-  final String status;
-  MoviesScreen({
-    @required this.status
-});
+
+class GenresScreen extends StatefulWidget {
 
   @override
-  _MoviesScreenState createState() => _MoviesScreenState();
+  _GenresScreenState createState() => _GenresScreenState();
 }
 
-class _MoviesScreenState extends State<MoviesScreen> {
+class _GenresScreenState extends State<GenresScreen>  with SingleTickerProviderStateMixin{
   List<Movie> _movies;
   ScrollController _scrollController;
+  TabController _tabController;
   int _countPage = 1;
   bool _stopRequest = false;
   bool _isLoading = false;
@@ -34,37 +32,23 @@ class _MoviesScreenState extends State<MoviesScreen> {
   @override
   void initState() {
     super.initState();
+    genresBloc..getGenres();
     _movies = [];
     _stopRequest = false;
     _isLoading = false;
     _scrollController = new ScrollController();
     _scrollController.addListener(_scrollListener);
-    getData();
+    _tabController = TabController(vsync: this, length: 44);
+    _tabController.addListener(() {
+      if (_tabController.indexIsChanging) {
+        moviesByGenreBloc..drainStream();
+      }
+    });
   }
 
-  void getData(){
-    switch(widget.status){
-      case "movies" :
-        moviesBloc..getMovies(countPage: _countPage);
-        break;
-      case "POPULAR" :
-        moviesPopularBloc..getMoviesPopular(countPage: _countPage);
-        break;
-      case "RECENT" :
-        moviesRecentBloc..getMoviesRecent(countPage: _countPage);
-        break;
-      case "DUB" :
-        moviesDubBloc..getMoviesDub(countPage: _countPage);
-        break;
-      case "CHINESE" :
-        moviesChineseBloc..getMoviesChinese(countPage: _countPage);
-        break;
-    }
-  }
 
   @override
   void dispose() {
-    _scrollController.dispose();
     super.dispose();
   }
 
@@ -73,17 +57,17 @@ class _MoviesScreenState extends State<MoviesScreen> {
     double currentScroll = _scrollController.position.pixels;
     double delta = 700;
     if ( maxScroll - currentScroll <= delta && maxScroll > 0) {
-        if (!_isLoading && !_stopRequest) {
-          _countPage += 1;
-          setState(() {
-            _isLoading = true;
-          });
-          getData();
-          Future.delayed(Duration(seconds: 2)).then((value) {
-              _isLoading = false;
-               setState(() {});
-         });
-        }
+      if (!_isLoading && !_stopRequest) {
+        _countPage += 1;
+        setState(() {
+          _isLoading = true;
+        });
+        // getData();
+        Future.delayed(Duration(seconds: 2)).then((value) {
+          _isLoading = false;
+          setState(() {});
+        });
+      }
     }
   }
 
@@ -92,93 +76,120 @@ class _MoviesScreenState extends State<MoviesScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Style.Colors.mainColor,
-         appBar: AppBar(
+      appBar: AppBar(
         backgroundColor: Style.Colors.mainColor,
         centerTitle: true,
         elevation: 0.0,
-        // leading: Icon(EvaIcons.menu2Outline, color: Colors.white,),
-        title: Text(widget.status.toUpperCase() + " MOVIE"),
-           actions: <Widget>[
-             IconButton(
-                 onPressed: () {
-                   Navigator.push(
-                     context,
-                     MaterialPageRoute(
-                       builder: (context) => SearchScreen(),
-                     ),
-                   );
-                 },
-                 icon: Icon(EvaIcons.searchOutline, color: Colors.white,)
-             )
-           ],
+        title: Text("GENRES MOVIE"),
+        actions: <Widget>[
+          IconButton(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => SearchScreen(),
+                  ),
+                );
+              },
+              icon: Icon(EvaIcons.searchOutline, color: Colors.white,)
+          )
+        ],
       ),
       body: SafeArea(
-        child: StreamBuilder<MovieResponse>(
-          stream: getStream(),
-          builder: (context, AsyncSnapshot<MovieResponse> snapshot) {
+        child: ListView(
+          children: [
+         StreamBuilder<GenreResponse>(
+          stream: genresBloc.subject.stream,
+          builder: (context, AsyncSnapshot<GenreResponse> snapshot) {
             if (snapshot.hasData) {
-              if (snapshot.data.error != null && snapshot.data.error.length > 0 && snapshot.hasError && _countPage == 1) {
-                return BuildError.buildErrorWidget(snapshot.data.error, retry: (){
-                  showDialog(
-                      context: context,
-                      builder: (BuildContext context) {
-                        return Center(child: CircularProgressIndicator());
-                      });
-                  getData();
-                  Future.delayed(Duration(seconds: 1), (){
-                    setState(() {
-                      Navigator.pop(context);
-                    });
-                  });
-                });
+              if (snapshot.data.error != null && snapshot.data.error.length > 0) {
+                return BuildError.buildErrorWidget(snapshot.data.error);
               }
-              return _buildMoviesWidget(snapshot.data);
-            } else if (snapshot.hasError && _countPage == 1) {
-              return BuildError.buildErrorWidget(snapshot.data.error, retry: (){
-                showDialog(
-                    context: context,
-                    builder: (BuildContext context) {
-                      return Center(child: CircularProgressIndicator());
-                    });
-                getData();
-                Future.delayed(Duration(seconds: 1), (){
-                  setState(() {
-                    Navigator.pop(context);
-                  });
-                });
-              });
+              return _buildGenresWidget(snapshot.data);
+            } else if (snapshot.hasError) {
+              return BuildError.buildErrorWidget(snapshot.data.error);
             } else {
-              return Loading.buildLoadingWidget();
+              return Container(
+                  height: 300,
+                  child: Loading.buildLoadingWidget()
+              );
             }
           },
         ),
+          ],
+        )
       ),
     );
   }
 
-  ValueStream<MovieResponse> getStream(){
-    switch(widget.status){
-      case "movies" :
-        return moviesBloc.subject.stream;
-      case "POPULAR" :
-        return moviesPopularBloc.subject.stream;
-      case "RECENT" :
-        return moviesRecentBloc.subject.stream;
-        break;
-      case "DUB" :
-        return moviesDubBloc.subject.stream;
-        break;
-      case "CHINESE" :
-        return moviesChineseBloc.subject.stream;
-        break;
-    }
+  Widget _buildGenresWidget(GenreResponse data) {
+    List<Genre> genres = data.genres;
+    print("===> ${genres.length}");
+    if (genres.length == 0) {
+      return Container(
+        width: MediaQuery.of(context).size.width,
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: <Widget>[
+            Column(
+              children: <Widget>[
+                Text(
+                  "No More Movies",
+                  style: TextStyle(color: Colors.black45),
+                )
+              ],
+            )
+          ],
+        ),
+      );
+    } else
+      return Container(
+          height: 307.0,
+          child: DefaultTabController(
+            length: genres.length,
+            child: Scaffold(
+              backgroundColor: Style.Colors.mainColor,
+              appBar: PreferredSize(
+                preferredSize: Size.fromHeight(50.0),
+                child: AppBar(
+                  backgroundColor: Style.Colors.mainColor,
+                  bottom: TabBar(
+                    controller: _tabController,
+                    indicatorColor: Style.Colors.secondColor,
+                    indicatorSize: TabBarIndicatorSize.tab,
+                    indicatorWeight: 3.0,
+                    unselectedLabelColor: Style.Colors.titleColor,
+                    labelColor: Colors.white,
+                    isScrollable: true,
+                    tabs: genres.map((Genre genre) {
+                      return Container(
+                          padding: EdgeInsets.only(bottom: 15.0, top: 10.0),
+                          child: new Text(genre.name.toUpperCase(), style: TextStyle(
+                            fontSize: 14.0,
+                            fontWeight: FontWeight.bold,
+                          )));
+                    }).toList(),
+                  ),
+                ),
+              ),
+              body: TabBarView(
+                controller: _tabController,
+                physics: NeverScrollableScrollPhysics(),
+                children: genres.map((Genre genre) {
+                  return GenreMovies(genreId: genre.id,);
+                }).toList(),
+              ),
+            ),
+          ));
   }
+
 
   Widget _buildMoviesWidget(MovieResponse data) {
     if(data.movies.length == 0)
-        _stopRequest = true;
+      _stopRequest = true;
     if(_movies.toString() != data.movies.toString())
-          _movies.addAll(data.movies);
+      _movies.addAll(data.movies);
     // remove duplicates movies
     _movies = [...{..._movies}];
     if (_movies.length == 0) {
@@ -188,7 +199,7 @@ class _MoviesScreenState extends State<MoviesScreen> {
             builder: (BuildContext context) {
               return Center(child: CircularProgressIndicator());
             });
-        getData();
+        // getData();
         Future.delayed(Duration(seconds: 1), (){
           setState(() {
             Navigator.pop(context);
@@ -205,10 +216,10 @@ class _MoviesScreenState extends State<MoviesScreen> {
               itemCount: _movies.length + 1,
               controller: _scrollController,
               gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: (orientation == Orientation.portrait) ? 3 : 4,
-              childAspectRatio: (orientation == Orientation.portrait)
-                  ? MediaQuery.of(context).size.width / (MediaQuery.of(context).size.height / 1)
-                  : MediaQuery.of(context).size.width / (MediaQuery.of(context).size.height / 0.4)),
+                  crossAxisCount: (orientation == Orientation.portrait) ? 3 : 4,
+                  childAspectRatio: (orientation == Orientation.portrait)
+                      ? MediaQuery.of(context).size.width / (MediaQuery.of(context).size.height / 1)
+                      : MediaQuery.of(context).size.width / (MediaQuery.of(context).size.height / 0.4)),
               itemBuilder: (context, index) {
                 if(index == _movies.length)
                   return _isLoading ? Padding(
@@ -221,7 +232,7 @@ class _MoviesScreenState extends State<MoviesScreen> {
                     onTap: () {
                       Navigator.push(
                         context,
-                        MaterialPageRoute(builder: (context) => MovieDetail(movie:  _movies[index], label: widget.status)),
+                        MaterialPageRoute(builder: (context) => MovieDetail(movie:  _movies[index])),
                       );
                     },
                     child: Column(
@@ -245,7 +256,7 @@ class _MoviesScreenState extends State<MoviesScreen> {
                           ),
                         ):
                         Hero(
-                          tag: _movies[index].id + widget.status,
+                          tag: _movies[index].id ,
                           child: Container(
                               width: 120.0,
                               height: 170.0,

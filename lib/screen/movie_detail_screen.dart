@@ -33,6 +33,12 @@ class _MovieDetailState extends State<MovieDetail> {
     moviesDetailBloc..getMoviesDetail(id: _movie.id);
     super.initState();
   }
+
+  @override
+  void dispose() {
+    moviesDetailBloc..drainStream();
+    super.dispose();
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
