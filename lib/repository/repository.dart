@@ -17,7 +17,7 @@ class MovieRepository {
   var getDubUrl = '$mainUrl/dub';
   var getChineUrl = '$mainUrl/chinese';
   var getDetailUrl = '$mainUrl/detail';
-  var getGenresUrl = '$mainUrl/genres/action';
+  var getGenresUrl = '$mainUrl/genre';
   var getGenresMovieUrl = '$mainUrl/genres';
 
   Future<MovieResponse> getNewSeasonMovie() async {
@@ -172,7 +172,7 @@ class MovieRepository {
   Future<GenreResponse> getGenres() async {
     try {
       Response response = await _dio.get(getGenresUrl);
-      return GenreResponse.fromJson(response.data['result']['data']);
+      return GenreResponse.fromJson(response.data['result']['data'][0]);
     } catch (error, stacktrace) {
       print("Exception occured: $error stackTrace: $stacktrace");
       return GenreResponse.withError("$error");
@@ -184,8 +184,9 @@ class MovieRepository {
     try {
       print("link  ${getGenresMovieUrl + "/$id" + "?page=${countPage.toString()}"}");
       Response response = await _dio.get(getGenresMovieUrl + "/$id}" + "?page=${countPage.toString()}");
-      Map data = Map.from(response.data['result']['data']);
-      return MovieResponse.fromJson(response.data['result']['data']['genTypeList']);
+      var data = response.data['result']['data'];
+      print("====> ${data}");
+      return MovieResponse.fromJson(response.data['result']['data'][0]);
     } catch (error, stacktrace) {
       print("Exception occured: $error stackTrace: $stacktrace");
       return MovieResponse.withError("$error");

@@ -13,16 +13,10 @@ class _SplashScreenAppState extends State<SplashScreenApp> {
   @override
   Widget build(BuildContext context) {
     return new SplashScreen(
-      seconds: 1,
-      navigateAfterSeconds: new MainScreen(),
-      title: new Text(
-        'ANIME TV',
-        style: new TextStyle(
-            fontWeight: FontWeight.bold,
-            height: 10,
-            fontSize: 20.0,
-            color: Colors.white),
-      ),
+      seconds: 4,
+      navigateAfterSeconds:  MainScreen(),
+      image:  Image.asset('assets/icon/logo_anime.png', fit: BoxFit.cover, colorBlendMode: BlendMode.color, ),
+      photoSize: 150,
         backgroundColor: Style.Colors.mainColor,
         loaderColor: Style.Colors.secondColor,
     );
