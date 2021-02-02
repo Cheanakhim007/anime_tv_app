@@ -183,8 +183,8 @@ class MovieRepository {
   Future<MovieResponse> getMovieByGenre(String id, {int countPage = 1}) async {
     try {
       print("link  ${getGenresMovieUrl + "/$id" + "?page=${countPage.toString()}"}");
-      Response response = await _dio.get(getGenresMovieUrl + "/$id}" + "?page=${countPage.toString()}");
-      var data = response.data['result']['data'];
+      Response response = await _dio.get(getGenresMovieUrl + "/$id" + "?page=${countPage.toString()}");
+      var data = response.data['result'];
       print("====> ${data}");
       return MovieResponse.fromJson(response.data['result']['data'][0]);
     } catch (error, stacktrace) {
