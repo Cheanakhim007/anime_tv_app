@@ -266,7 +266,7 @@ class _MovieDetailState extends State<MovieDetail> {
                           VideoPlay response = await repository.getMoviesPlay(_movie.id + "-episode-" + e.toString());
                           Navigator.pop(context);
                           if(response != null && response.source.isNotEmpty){
-                                String url = response.source[0];
+                                String url = response.source[0][0];
                                 Navigator.push(
                                   context,
                                   MaterialPageRoute(builder: (context) => VideoPlayScreen(url: url)),

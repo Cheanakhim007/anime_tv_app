@@ -184,9 +184,8 @@ class MovieRepository {
     try {
       print("link  ${getGenresMovieUrl + "/$id" + "?page=${countPage.toString()}"}");
       Response response = await _dio.get(getGenresMovieUrl + "/$id" + "?page=${countPage.toString()}");
-      var data = response.data['result'];
-      print("====> ${data}");
-      return MovieResponse.fromJson(response.data['result']['data'][0]);
+      print("====> ${response.statusCode}");
+      return MovieResponse.fromJson(response.data['result']['data']);
     } catch (error, stacktrace) {
       print("Exception occured: $error stackTrace: $stacktrace");
       return MovieResponse.withError("$error");
