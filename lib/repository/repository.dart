@@ -1,11 +1,19 @@
 
 import 'package:anime_tv_app/model/genre_response.dart';
 import 'package:anime_tv_app/model/home_repository.dart';
+import 'package:anime_tv_app/model/movie_detail.dart';
 import 'package:anime_tv_app/model/movie_repository.dart';
 import 'package:anime_tv_app/model/video_play.dart';
 import 'package:dio/dio.dart';
 
 class MovieRepository {
+  MovieRepository();
+  static void setMainUrl(String mainUrl){
+    if(mainUrl != null && mainUrl.isNotEmpty)
+      MovieRepository.mainUrl = mainUrl;
+    else
+      MovieRepository.mainUrl = "https://anime-tv.gigalixirapp.com/api/vod";
+  }
   static String mainUrl = "https://anime-tv.gigalixirapp.com/api/vod";
   final Dio _dio = Dio();
   var getNewseasonUrl = '$mainUrl/newseason';
@@ -138,18 +146,18 @@ class MovieRepository {
     }
   }
 
-  Future<MovieResponse> getMoviesDetail(String id) async {
+  Future<MovieDetailResponse> getMoviesDetail(String id) async {
     try {
       print("link  $getDetailUrl/$id");
       Response response = await _dio.get(getDetailUrl+"/$id");
       print("Result: ${response.data['code']}");
       if(response.data['code'] == 200)
-        return MovieResponse.fromJson([response.data['result']['data']]);
+        return MovieDetailResponse.fromJson([response.data['result']['data']]);
       else
-        return MovieResponse.withError("No movie");
+        return MovieDetailResponse.withError("No movie");
     } catch (error, stacktrace) {
       print("Exception occured: $error stackTrace: $stacktrace");
-      return MovieResponse.withError("$error");
+      return MovieDetailResponse.withError("$error");
     }
   }
 

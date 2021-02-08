@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:anime_tv_app/bloc/botton_navbar_bloc.dart';
 import 'package:anime_tv_app/model/app_config.dart';
+import 'package:anime_tv_app/repository/repository.dart';
 import 'package:anime_tv_app/screen/movies.dart';
 import 'package:anime_tv_app/screen/genres_screen.dart';
 import 'package:data_connection_checker/data_connection_checker.dart';
@@ -147,13 +148,17 @@ class _MainScreenState extends State<MainScreen> {
       int maxVersion = int.parse(remoteConfig.getString('maxVersion'));
       String updateTitle = remoteConfig.getString('updateTitle');
       String updateMessage = remoteConfig.getString('updateMessage');
+      String mainUrl = remoteConfig.getString('mainUrl');
+      bool isShowAdvertisement = remoteConfig.getString('isShowAdvertisement') == 'true';
 
       print("-----> ${AppConfigUtils.appConfig}");
       print("-----> ${appUrl}");
       print("-----> ${currentVersion}");
       print("-----> ${updateTitle}");
       print("-----> ${updateMessage}");
-
+      print("-----> mainUrl  ${mainUrl}");
+      print("-----> isShowAdvertisement ${isShowAdvertisement}");
+      MovieRepository.setMainUrl(mainUrl);
       if( currentVersion >  AppConfigUtils.appConfig.softwareVersion){
         return  _showVersionDialog(
           context: context,
@@ -163,8 +168,10 @@ class _MainScreenState extends State<MainScreen> {
         );
       }
     }on FetchThrottledException catch (exception) {
+      MovieRepository.setMainUrl(null);
       print( "Error --->   $exception");
     } catch (exception) {
+      MovieRepository.setMainUrl(null);
       print('Unable to fetch remote config. Cached or default values will beused');
     }
 

@@ -1,11 +1,12 @@
 import 'package:anime_tv_app/bloc/get_detail_movie_bloc.dart';
 import 'package:anime_tv_app/model/movie.dart';
-import 'package:anime_tv_app/model/movie_repository.dart';
+import 'package:anime_tv_app/model/movie_detail.dart';
 import 'package:anime_tv_app/model/video_play.dart';
 import 'file:///C:/Users/Nakhim007/Desktop/App/anime_tv_app/lib/screen/video_play_screen.dart';
 import 'package:anime_tv_app/repository/repository.dart';
 import 'package:anime_tv_app/widget/error_widget.dart';
 import 'package:anime_tv_app/widget/loading_widget.dart';
+import 'package:eva_icons_flutter/eva_icons_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:anime_tv_app/style/theme.dart' as Style;
 import 'package:sliver_fab/sliver_fab.dart';
@@ -30,6 +31,7 @@ class _MovieDetailState extends State<MovieDetail> {
 
   @override
   void initState() {
+    moviesDetailBloc..drainStream();
     moviesDetailBloc..getMoviesDetail(id: _movie.id);
     super.initState();
   }
@@ -46,7 +48,7 @@ class _MovieDetailState extends State<MovieDetail> {
       body: Builder(
           builder: (context){
             return  SliverFab(
-                floatingPosition: FloatingPosition(right: 20),
+                floatingPosition: FloatingPosition(right: 2),
                 floatingWidget: Container(),
                 expandedHeight: 300,
                 slivers: <Widget>[
@@ -71,7 +73,7 @@ class _MovieDetailState extends State<MovieDetail> {
                                 decoration:  BoxDecoration(
                                   shape: BoxShape.rectangle,
                                   image:  DecorationImage(
-                                      fit: BoxFit.cover,
+                                      fit: BoxFit.contain,
                                       image: NetworkImage(_movie.image)),
                                 ),
                                 child:  Container(
@@ -102,9 +104,9 @@ class _MovieDetailState extends State<MovieDetail> {
                         padding: EdgeInsets.symmetric(vertical: 10),
                         sliver: SliverList(
                             delegate: SliverChildListDelegate([
-                              StreamBuilder<MovieResponse>(
+                              StreamBuilder<MovieDetailResponse>(
                                 stream: moviesDetailBloc.subject.stream,
-                                builder: (context, AsyncSnapshot<MovieResponse> snapshot){
+                                builder: (context, AsyncSnapshot<MovieDetailResponse> snapshot){
                                   if (snapshot.hasData) {
                                     if (snapshot.data.error != null && snapshot.data.error.length > 0) {
                                       return BuildError.buildErrorWidget(snapshot.data.error, retry: (){
@@ -154,8 +156,12 @@ class _MovieDetailState extends State<MovieDetail> {
     );
   }
 
-  Widget buildSliverBody(MovieResponse data) {
+  Widget buildSliverBody(MovieDetailResponse data) {
     Movie movie = data.movies[0];
+    List<Movie> release = data.release ?? [];
+    release.shuffle();
+    release = release.sublist(0, 6);
+    print("--------> ${release.length}");
     String des = movie.description[1]['value'] ?? "";
 
     if (des.length > 100) {
@@ -266,7 +272,7 @@ class _MovieDetailState extends State<MovieDetail> {
                           VideoPlay response = await repository.getMoviesPlay(_movie.id + "-episode-" + e.toString());
                           Navigator.pop(context);
                           if(response != null && response.source.isNotEmpty){
-                                String url = response.source[0][0];
+                                String url = response.source[0];
                                 Navigator.push(
                                   context,
                                   MaterialPageRoute(builder: (context) => VideoPlayScreen(url: url)),
@@ -307,7 +313,94 @@ class _MovieDetailState extends State<MovieDetail> {
               SizedBox(height: 8),
             ],
           ),
-        )
+        ),
+        SizedBox(
+          height: 5.0,
+        ),
+        Visibility(
+          visible: release.length > 0,
+          child: Container(
+            height: 245.0,
+            padding: EdgeInsets.only(left: 10.0),
+            child: ListView.builder(
+              scrollDirection: Axis.horizontal,
+              itemCount: release.length,
+              itemBuilder: (context, index) {
+                return Padding(
+                  padding: EdgeInsets.only(
+                      top: 10.0,
+                      bottom: 10.0,
+                      right: 15.0
+                  ),
+                  child: GestureDetector(
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => MovieDetail(movie: release[index], label: widget.label + index.toString())),
+                      ).then((value){
+                        setState(() {
+                          moviesDetailBloc..drainStream();
+                          moviesDetailBloc..getMoviesDetail(id: _movie.id);
+                        });
+                      });
+                    },
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: <Widget>[
+                        release[index].image == null ?
+                        Container(
+                          width: 120.0,
+                          height: 180.0,
+                          decoration: new BoxDecoration(
+                            color: Style.Colors.secondColor,
+                            borderRadius:
+                            BorderRadius.all(Radius.circular(2.0)),
+                            shape: BoxShape.rectangle,
+                          ),
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: <Widget>[
+                              Icon(EvaIcons.filmOutline, color: Colors.white, size: 60.0,)
+                            ],
+                          ),
+                        ):
+                        Hero(
+                          tag: release[index].id + widget.label + index.toString(),
+                          child: Container(
+                              width: 120.0,
+                              height: 180.0,
+                              decoration: new BoxDecoration(
+                                borderRadius:
+                                BorderRadius.all(Radius.circular(2.0)),
+                                shape: BoxShape.rectangle,
+                                image: new DecorationImage(
+                                    fit: BoxFit.cover,
+                                    image: NetworkImage(release[index].image)),
+                              )),
+                        ),
+                        SizedBox(
+                          height: 10.0,
+                        ),
+                        Container(
+                          width: 100,
+                          child: Text(
+                            release[index].title,
+                            maxLines: 2,
+                            style: TextStyle(
+                                height: 1.4,
+                                color: Colors.white,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 11.0),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                );
+              },
+            ),
+          ),
+        ),
       ],
     );
   }
