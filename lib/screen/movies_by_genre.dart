@@ -33,6 +33,7 @@ class _GenreMoviesState extends State<GenreMovies> {
     _isLoading = false;
     _scrollController = new ScrollController();
     _scrollController.addListener(_scrollListener);
+    print("====> id ${genreId}");
     moviesByGenreBloc..getMoviesByGenre(genreId, countPage: _countPage);
   }
 
@@ -66,12 +67,13 @@ class _GenreMoviesState extends State<GenreMovies> {
     return StreamBuilder<MovieResponse>(
     stream: moviesByGenreBloc.subject.stream,
     builder: (context, AsyncSnapshot<MovieResponse> snapshot) {
+      print("===> ${snapshot}");
       if (snapshot.hasData) {
-        if (snapshot.data.error != null && snapshot.data.error.length > 0) {
+        if (snapshot.data.error != null && snapshot.data.error.length > 0 && _countPage == 1) {
           return BuildError.buildErrorWidget(snapshot.data.error);
         }
         return _buildHomeWidget(snapshot.data);
-      } else if (snapshot.hasError) {
+      } else if (snapshot.hasError && _countPage == 1) {
         return BuildError.buildErrorWidget(snapshot.data.error);
       } else {
         return Container(
@@ -84,8 +86,7 @@ class _GenreMoviesState extends State<GenreMovies> {
   }
   Widget _buildHomeWidget(MovieResponse data) {
     if(data.movies.length == 0)
-      _stopRequest = true;
-
+       _stopRequest = true;
     _movies.addAll(data.movies);
     // remove duplicates movies
     _movies = [...{..._movies}];

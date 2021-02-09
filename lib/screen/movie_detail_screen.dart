@@ -24,6 +24,7 @@ class MovieDetail extends StatefulWidget {
 class _MovieDetailState extends State<MovieDetail> {
   _MovieDetailState(this._movie);
   final Movie _movie;
+  MovieDetailResponse dataMovie;
   String firstHalf;
   String secondHalf;
   bool flag = true;
@@ -139,11 +140,16 @@ class _MovieDetailState extends State<MovieDetail> {
                                       });
                                     });
                                   } else {
-                                    return Container(
-                                         height: 300,
-                                         alignment: Alignment.center,
-                                        child: Loading.buildLoadingWidget()
-                                    );
+                                    if(dataMovie?.movies?.length == null){
+                                      return Container(
+                                          height: 300,
+                                          alignment: Alignment.center,
+                                          child: Loading.buildLoadingWidget()
+                                      );
+                                    }else{
+                                      return buildSliverBody(dataMovie);
+                                    }
+
                                   }
                                 },
                               )
@@ -158,10 +164,10 @@ class _MovieDetailState extends State<MovieDetail> {
 
   Widget buildSliverBody(MovieDetailResponse data) {
     Movie movie = data.movies[0];
+    dataMovie = data;
     List<Movie> release = data.release ?? [];
     release.shuffle();
     release = release.sublist(0, 6);
-    print("--------> ${release.length}");
     String des = movie.description[1]['value'] ?? "";
 
     if (des.length > 100) {
@@ -337,12 +343,7 @@ class _MovieDetailState extends State<MovieDetail> {
                       Navigator.push(
                         context,
                         MaterialPageRoute(builder: (context) => MovieDetail(movie: release[index], label: widget.label + index.toString())),
-                      ).then((value){
-                        setState(() {
-                          moviesDetailBloc..drainStream();
-                          moviesDetailBloc..getMoviesDetail(id: _movie.id);
-                        });
-                      });
+                      );
                     },
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,

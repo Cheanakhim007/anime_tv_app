@@ -180,7 +180,7 @@ class MovieRepository {
   Future<GenreResponse> getGenres() async {
     try {
       Response response = await _dio.get(getGenresUrl);
-      return GenreResponse.fromJson(response.data['result']['data'][0]);
+      return GenreResponse.fromJson(response.data['result']['data']);
     } catch (error, stacktrace) {
       print("Exception occured: $error stackTrace: $stacktrace");
       return GenreResponse.withError("$error");
@@ -193,9 +193,12 @@ class MovieRepository {
       print("link  ${getGenresMovieUrl + "/$id" + "?page=${countPage.toString()}"}");
       Response response = await _dio.get(getGenresMovieUrl + "/$id" + "?page=${countPage.toString()}");
       print("====> ${response.statusCode}");
-      return MovieResponse.fromJson(response.data['result']['data']);
+      if(List.from(response.data['result']['data']).length > 0 && !List.from(response.data['result']['data'])[0].toString().contains("Can't find page 2 genre/yuri 404"))
+          return MovieResponse.fromJson(response.data['result']['data']);
+      else
+        return  MovieResponse.withError("${response.data['code']}");
     } catch (error, stacktrace) {
-      print("Exception occured: $error stackTrace: $stacktrace");
+      print("Exception : $error stackTrace: $stacktrace");
       return MovieResponse.withError("$error");
     }
   }

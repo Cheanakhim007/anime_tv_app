@@ -13,7 +13,7 @@ class _SplashScreenAppState extends State<SplashScreenApp> {
   @override
   Widget build(BuildContext context) {
     return new SplashScreen(
-      seconds: 4,
+      seconds: 2,
       navigateAfterSeconds:  MainScreen(),
       image:  Image.asset('assets/icon/logo_anime.png', fit: BoxFit.cover, colorBlendMode: BlendMode.color, ),
       photoSize: 150,

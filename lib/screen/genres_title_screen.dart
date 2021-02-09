@@ -58,7 +58,6 @@ class _GenresTitleState extends State<GenresTitle> with SingleTickerProviderStat
             ),
             body: TabBarView(
               controller: _tabController,
-              physics: NeverScrollableScrollPhysics(),
               children: widget.genres.map((Genre genre) {
                 return GenreMovies(
                   genreId: genre.id,
