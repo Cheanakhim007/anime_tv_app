@@ -10,20 +10,22 @@ import 'package:anime_tv_app/style/theme.dart' as Style;
 
 class GenreMovies extends StatefulWidget {
   final String genreId;
-  GenreMovies({Key key, @required this.genreId})
+  final String id;
+  GenreMovies({Key key, @required this.genreId , this.id})
       : super(key: key);
   @override
   _GenreMoviesState createState() => _GenreMoviesState(genreId);
 }
 
 class _GenreMoviesState extends State<GenreMovies> {
-  final String genreId;
+  String genreId;
   _GenreMoviesState(this.genreId);
   List<Movie> _movies;
   ScrollController _scrollController;
   bool _stopRequest = false;
   bool _isLoading = false;
   int _countPage = 1;
+  var id ;
 
   @override
   void initState() {
@@ -32,9 +34,29 @@ class _GenreMoviesState extends State<GenreMovies> {
     _stopRequest = false;
     _isLoading = false;
     _scrollController = new ScrollController();
+    moviesByGenreBloc..drainStream();
     _scrollController.addListener(_scrollListener);
-    print("====> id ${genreId}");
-    moviesByGenreBloc..getMoviesByGenre(genreId, countPage: _countPage);
+    intiData();
+  }
+
+  void intiData() async {
+    int i = 0;
+    while(genreId != widget.id ) {
+      print("===> 1 ${widget.id}");
+      print("===> 2 ${genreId}");
+      print("===> 3 ${id}");
+      print("===> 4 ${i}");
+      await Future.delayed(Duration(seconds: 1));
+      i++;
+      if(i == 5)
+        return;
+    }
+
+    print("===>");
+    id = genreId;
+
+
+     moviesByGenreBloc..getMoviesByGenre(id, countPage: _countPage);
   }
 
   @override
@@ -52,7 +74,7 @@ class _GenreMoviesState extends State<GenreMovies> {
         setState(() {
           _isLoading = true;
         });
-        moviesByGenreBloc..getMoviesByGenre(genreId, countPage: _countPage);
+        intiData();
         Future.delayed(Duration(seconds: 2)).then((value) {
           _isLoading = false;
           setState(() {});
@@ -67,7 +89,6 @@ class _GenreMoviesState extends State<GenreMovies> {
     return StreamBuilder<MovieResponse>(
     stream: moviesByGenreBloc.subject.stream,
     builder: (context, AsyncSnapshot<MovieResponse> snapshot) {
-      print("===> ${snapshot}");
       if (snapshot.hasData) {
         if (snapshot.data.error != null && snapshot.data.error.length > 0 && _countPage == 1) {
           return BuildError.buildErrorWidget(snapshot.data.error);
@@ -87,7 +108,10 @@ class _GenreMoviesState extends State<GenreMovies> {
   Widget _buildHomeWidget(MovieResponse data) {
     if(data.movies.length == 0)
        _stopRequest = true;
-    _movies.addAll(data.movies);
+    if(_countPage > 1)
+        _movies.addAll(data.movies);
+    else
+      _movies = data.movies;
     // remove duplicates movies
     _movies = [...{..._movies}];
     print("----> ${_movies.length}");

@@ -13,6 +13,7 @@ class GenresTitle extends StatefulWidget {
 
 class _GenresTitleState extends State<GenresTitle> with SingleTickerProviderStateMixin{
   TabController _tabController;
+  int index = 0;
 
   @override
   void initState() {
@@ -21,6 +22,10 @@ class _GenresTitleState extends State<GenresTitle> with SingleTickerProviderStat
     _tabController.addListener(() {
       if (_tabController.indexIsChanging) {
         moviesByGenreBloc..drainStream();
+      }else if(_tabController.index != _tabController.previousIndex){
+        setState(() {
+          index = _tabController.index;
+        });
       }
     });
   }
@@ -44,6 +49,11 @@ class _GenresTitleState extends State<GenresTitle> with SingleTickerProviderStat
                   unselectedLabelColor: Style.Colors.titleColor,
                   labelColor: Colors.white,
                   isScrollable: true,
+                  onTap: (value){
+                    setState(() {
+                      index = value;
+                    });
+                  },
                   tabs: widget.genres.map((Genre genre) {
                     return Container(
                         padding: EdgeInsets.only(bottom: 15.0, top: 10.0),
@@ -61,6 +71,7 @@ class _GenresTitleState extends State<GenresTitle> with SingleTickerProviderStat
               children: widget.genres.map((Genre genre) {
                 return GenreMovies(
                   genreId: genre.id,
+                  id: widget.genres[index].id,
                 );
               }).toList(),
             ),
