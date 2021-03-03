@@ -208,7 +208,7 @@ class _GenreMoviesState extends State<GenreMovies> {
     }
   }
 
-  Container _buildNoMovie() {
+  Widget _buildNoMovie() {
     return Container(
       width: MediaQuery.of(context).size.width,
       child: Column(
