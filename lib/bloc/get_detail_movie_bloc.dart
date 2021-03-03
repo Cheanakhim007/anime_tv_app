@@ -10,6 +10,7 @@ class MoviesDetailBloc {
 
   getMoviesDetail({String id}) async {
     MovieDetailResponse response = await _repository.getMoviesDetail(id);
+    response.release.shuffle();
     _subject.sink.add(response);
   }
 

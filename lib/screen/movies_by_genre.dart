@@ -47,15 +47,14 @@ class _GenreMoviesState extends State<GenreMovies> {
       print("===> 3 ${id}");
       print("===> 4 ${i}");
       await Future.delayed(Duration(seconds: 1));
+      print("===> 5 ${i}");
       i++;
       if(i == 5)
-        return;
+        genreId = widget.id;
     }
 
     print("===>");
     id = genreId;
-
-
      moviesByGenreBloc..getMoviesByGenre(id, countPage: _countPage);
   }
 
@@ -91,11 +90,11 @@ class _GenreMoviesState extends State<GenreMovies> {
     builder: (context, AsyncSnapshot<MovieResponse> snapshot) {
       if (snapshot.hasData) {
         if (snapshot.data.error != null && snapshot.data.error.length > 0 && _countPage == 1) {
-          return BuildError.buildErrorWidget(snapshot.data.error);
+          return _buildNoMovie();
         }
         return _buildHomeWidget(snapshot.data);
       } else if (snapshot.hasError && _countPage == 1) {
-        return BuildError.buildErrorWidget(snapshot.data.error);
+        return _buildNoMovie();
       } else {
         return Container(
             height: double.infinity,
@@ -116,24 +115,7 @@ class _GenreMoviesState extends State<GenreMovies> {
     _movies = [...{..._movies}];
     print("----> ${_movies.length}");
     if (_movies.length == 0) {
-      return Container(
-        width: MediaQuery.of(context).size.width,
-
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: <Widget>[
-            Column(
-              children: <Widget>[
-                Text(
-                  "No More Movies",
-                  style: TextStyle(color: Colors.black45),
-                )
-              ],
-            )
-          ],
-        ),
-      );
+      return _buildNoMovie();
     } else{
 
       final orientation = MediaQuery.of(context).orientation;
@@ -224,5 +206,25 @@ class _GenreMoviesState extends State<GenreMovies> {
         ],
       );
     }
+  }
+
+  Container _buildNoMovie() {
+    return Container(
+      width: MediaQuery.of(context).size.width,
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: <Widget>[
+          Column(
+            children: <Widget>[
+              Text(
+                "No More Movies",
+                style: TextStyle(color: Colors.white),
+              )
+            ],
+          )
+        ],
+      ),
+    );
   }
 }

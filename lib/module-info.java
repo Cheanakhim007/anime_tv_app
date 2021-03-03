@@ -1,2 +1,0 @@
-module anime.tv.app {
-}

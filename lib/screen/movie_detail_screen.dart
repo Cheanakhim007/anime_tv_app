@@ -2,8 +2,8 @@ import 'package:anime_tv_app/bloc/get_detail_movie_bloc.dart';
 import 'package:anime_tv_app/model/movie.dart';
 import 'package:anime_tv_app/model/movie_detail.dart';
 import 'package:anime_tv_app/model/video_play.dart';
-import 'file:///C:/Users/Nakhim007/Desktop/App/anime_tv_app/lib/screen/video_play_screen.dart';
 import 'package:anime_tv_app/repository/repository.dart';
+import 'package:anime_tv_app/screen/video_play_screen.dart';
 import 'package:anime_tv_app/widget/error_widget.dart';
 import 'package:anime_tv_app/widget/loading_widget.dart';
 import 'package:eva_icons_flutter/eva_icons_flutter.dart';
@@ -166,7 +166,6 @@ class _MovieDetailState extends State<MovieDetail> {
     Movie movie = data.movies[0];
     dataMovie = data;
     List<Movie> release = data.release ?? [];
-    release.shuffle();
     release = release.sublist(0, 6);
     String des = movie.description[1]['value'] ?? "";
 
